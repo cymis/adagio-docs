@@ -37,7 +37,8 @@ jobs:
       - name: Build site
         env:
           ASTRO_TELEMETRY_DISABLED: '1'
-          SITE_URL: https://docs.adagiodata.com
+          SITE_URL: ${{ vars.DOCS_SITE_URL || 'https://cymis.github.io' }}
+          BASE_PATH: ${{ vars.DOCS_BASE_PATH || '/adagio-docs' }}
         run: npm run build
 
       - name: Upload artifact

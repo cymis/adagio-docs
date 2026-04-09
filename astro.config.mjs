@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  base: process.env.BASE_PATH ?? '/',
   site: process.env.SITE_URL ?? 'https://docs.adagiodata.com',
   integrations: [
     starlight({
