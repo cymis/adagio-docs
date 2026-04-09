@@ -2,10 +2,12 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  site: process.env.SITE_URL ?? 'https://docs.adagiodata.com',
   integrations: [
     starlight({
       title: 'Adagio',
       description: 'QIIME2 pipeline orchestration platform',
+      disable404Route: true,
       social: {
         github: 'https://github.com/cymis',
       },

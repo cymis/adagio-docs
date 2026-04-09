@@ -1,6 +1,7 @@
 dist/
 node_modules/
 .astro/
+.npm-cache/
 .env
 .env.*
 !.env.example
