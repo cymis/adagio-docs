@@ -1,9 +1,22 @@
 ---
-title: CLI Configuration
-description: Customizing how the CLI resolves and runs tasks
+title: Runtime Configuration
+description: Customizing task environments for Docker and Apptainer execution
 ---
 
-By default, the CLI resolves each pipeline task to a published Docker image based on the plugin name. A runtime config file lets you override this — useful when working with custom images, specific versions, or HPC environments that use Apptainer instead of Docker.
+By default, the CLI resolves each plugin action to a Docker image derived from the plugin name:
+
+```text
+ghcr.io/cymis/qiime2-plugin-<plugin-name>:2026.1
+```
+
+A runtime config file lets you override that resolution without editing the pipeline itself.
+
+Use a runtime config when you need to:
+
+- run a plugin from your own Docker image
+- pin one plugin to a different tag
+- use Apptainer or Singularity on HPC
+- override one task in an otherwise standard pipeline
 
 ## Using a config file
 
@@ -34,10 +47,19 @@ demux = { image = "ghcr.io/cymis/qiime2-plugin-demux:2026.1" }
 
 Settings are resolved in this order, from highest to lowest priority:
 
-1. `[tasks]` — overrides for a specific task
-2. `[plugins]` — overrides for all tasks from a plugin
-3. `[defaults]` — fallback for anything not explicitly set
-4. Built-in defaults (published GHCR images)
+1. `[tasks]` - overrides for a specific task
+2. `[plugins]` - overrides for all tasks from a plugin
+3. `[defaults]` - fallback for anything not explicitly set
+4. built-in defaults
+
+## Choosing keys
+
+Use:
+
+- plugin names in `[plugins]`
+- `plugin.action` names in `[tasks]`
+
+`plugin.action` is usually the most stable task key for exported pipelines.
 
 ## Common scenarios
 
@@ -50,16 +72,35 @@ version = 1
 dada2 = { image = "ghcr.io/cymis/qiime2-plugin-dada2:2025.4" }
 ```
 
-### Use a locally built image for one task
+### Use a user-built Docker image for a plugin that is not in the default image set
+
+```toml
+version = 1
+
+[plugins]
+my_plugin = { image = "registry.example.org/qiime2-plugin-my-plugin:dev" }
+```
+
+This is the main way to run a saved pipeline with a container you wrote yourself.
+
+Important:
+
+- the pipeline file still refers to the plugin by plugin name
+- the runtime config tells Adagio which container to launch for that plugin
+- this works even if the image is not part of Adagio's default GHCR set
+
+If you also want to build pipelines with that plugin in the Adagio UI, you must register the plugin with Adagio through QAPI submission. See [Registering and Submitting a Plugin](/contributing/submitting-a-plugin/).
+
+### Use a locally built image for one task only
 
 ```toml
 version = 1
 
 [tasks]
-"dada2.denoise_paired" = { image = "localhost/my-dada2-dev:latest" }
+"dada2.denoise_single" = { image = "localhost/my-dada2-dev:latest" }
 ```
 
-### Force a specific platform
+### Force a specific Docker platform
 
 Useful on Apple Silicon when tasks must run as `linux/amd64`:
 
@@ -72,20 +113,21 @@ platform = "linux/amd64"
 
 ### Use Apptainer instead of Docker
 
-For HPC environments where Docker is not available, Adagio can run tasks with Apptainer (or Singularity) using local `.sif` image files:
+For HPC environments where Docker is not available, Adagio can run tasks with Apptainer or Singularity using local `.sif` files:
 
 ```toml
 version = 1
 
-[defaults]
-kind = "docker"
-
 [plugins]
 dada2 = { kind = "apptainer", image = "/shared/images/qiime2-plugin-dada2.sif" }
-bowtie2 = { kind = "apptainer", image = "/shared/images/qiime2-plugin-bowtie2.sif" }
+demux = { kind = "apptainer", image = "/shared/images/qiime2-plugin-demux.sif" }
 ```
 
-`kind` can be `docker` (default) or `apptainer`. When using `apptainer`, `image` must be a local path to a `.sif` file. Adagio prefers the `apptainer` executable and falls back to `singularity`.
+Rules:
+
+- `kind` can be `docker` or `apptainer`
+- for `apptainer`, `image` must be a local `.sif` path
+- Adagio prefers the `apptainer` executable and falls back to `singularity`
 
 ### Mix Docker and Apptainer
 
@@ -96,17 +138,23 @@ version = 1
 kind = "docker"
 
 [plugins]
-# most plugins run in Docker
 dada2 = { image = "ghcr.io/cymis/qiime2-plugin-dada2:2026.1" }
-
-# one plugin uses a local Apptainer image
-bowtie2 = { kind = "apptainer", image = "/shared/images/q2-bowtie2.sif" }
+my_plugin = { kind = "apptainer", image = "/shared/images/my-plugin.sif" }
 ```
+
+## What runtime config does not do
+
+Runtime config affects execution only. It does not:
+
+- add a plugin to the Adagio UI
+- change plugin visibility
+- change the saved pipeline file
+- publish anything to the shared catalogs
 
 ## Full config reference
 
 | Key | Applies to | Values | Description |
 |-----|-----------|--------|-------------|
-| `kind` | defaults, plugins, tasks | `docker`, `apptainer` | Task runner to use |
-| `image` | defaults, plugins, tasks | image ref or `.sif` path | Container image to use |
+| `kind` | defaults, plugins, tasks | `docker`, `apptainer` | task runner to use |
+| `image` | defaults, plugins, tasks | image ref or `.sif` path | container image to use |
 | `platform` | defaults, plugins, tasks | e.g. `linux/amd64` | Docker platform override |

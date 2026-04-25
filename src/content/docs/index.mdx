@@ -3,13 +3,35 @@ title: Adagio
 description: Build and run bioinformatics pipelines without writing code
 ---
 
-Adagio lets you build and run bioinformatics data processing pipelines through a visual interface — no programming required.
+Adagio lets you build and run bioinformatics pipelines through a visual interface and a portable CLI.
 
-Connect analysis steps together on a canvas, configure your inputs, and run your pipeline directly from the browser or from the command line.
+The same exported `.adg` pipeline file can be:
 
-## Where to start
+- built and edited in the browser
+- inspected and run from the command line
+- submitted to the shared pipeline catalog
 
-- **New to Adagio?** Start with the [Introduction](/getting-started/introduction/) to understand what Adagio does and how it works.
-- **Ready to build?** Jump to the [Quick Start](/getting-started/quick-start/) to build and run your first pipeline.
-- **Want to run pipelines from the terminal?** See [Running with the CLI](/running/cli/).
-- **Building a custom plugin or pipeline?** See the [Contributing](/contributing/building-a-plugin/) section.
+## Start here
+
+- New to Adagio: read [Introduction](/getting-started/introduction/).
+- Want to build a pipeline: start with [Quick Start](/getting-started/quick-start/) and then [Connections and Semantic Types](/building/connections-and-types/).
+- Want to run a downloaded pipeline: read [Running with the CLI](/running/cli/), [Runtime Configuration](/running/cli-config/), and [Cache Behavior](/running/cache/).
+- Want to register a plugin or submit a pipeline: read [Registering and Submitting a Plugin](/contributing/submitting-a-plugin/) and [Submitting a Pipeline](/contributing/submitting-a-pipeline/).
+
+## Common workflows
+
+- Build in the browser, then export for local execution:
+  [Quick Start](/getting-started/quick-start/) ->
+  [Managing Pipelines](/building/managing/) ->
+  [Running with the CLI](/running/cli/)
+- Understand why a connection is or is not allowed:
+  [Working with Nodes](/building/nodes/) ->
+  [Connections and Semantic Types](/building/connections-and-types/)
+- Run a pipeline with custom Docker or Apptainer images:
+  [Running with the CLI](/running/cli/) ->
+  [Runtime Configuration](/running/cli-config/) ->
+  [Cache Behavior](/running/cache/)
+- Make a plugin available in Adagio and iterate on a local workflow:
+  [Plugin Development Resources](/contributing/building-a-plugin/) ->
+  [Registering and Submitting a Plugin](/contributing/submitting-a-plugin/) ->
+  [Developer Workflow](/contributing/developer-workflow/)

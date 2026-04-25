@@ -3,54 +3,112 @@ title: Submitting a Pipeline
 description: How to contribute a pipeline to the community catalog
 ---
 
-Pipelines you build in Adagio can be shared with the community through the [adagio-pipelines](https://github.com/cymis/adagio-pipelines) catalog. Community pipelines are discoverable in the **Explore** section of the Lattice UI.
+Pipelines you build in Adagio can be shared through the `adagio-pipelines` catalog repository.
 
-## Pipeline tiers
+New external submissions start in the community catalog. Promotion to official is a separate maintainer decision.
 
-| Tier | Path | Description |
-|------|------|-------------|
-| **Community** | `pipelines/community/<slug>/` | Contributed pipelines, open to all |
-| **Official** | `pipelines/official/<slug>/` | Stable, maintainer-supported pipelines |
+## Catalog states
 
-New submissions go into `pipelines/community/`. Promotion to `pipelines/official/` is a separate process after a pipeline has proven stable.
+| State | Path | Meaning |
+|------|------|---------|
+| `community` | `pipelines/community/<slug>/` | public contributed workflow |
+| `official` | `pipelines/official/<slug>/` | maintainer-endorsed workflow |
 
 ## What to include
 
 Each pipeline submission is a directory containing:
 
-- **`pipeline.adg`** — the pipeline file. Download this from the Adagio UI (pipeline settings → Download).
-- **`metadata.toml`** — catalog metadata describing the pipeline.
-- **`README.md`** — optional for community, required for official pipelines.
+- `pipeline.adg`
+- `metadata.toml`
+- optional `README.md` for community pipelines
+- required `README.md` for official pipelines
 
-## metadata.toml format
+Use the repository template as your starting point:
 
-```toml
-name = "My Pipeline"
-description = "A short description of what this pipeline does."
-version = "1.0.0"
-authors = ["Your Name <you@example.com>"]
-tags = ["amplicon", "dada2", "taxonomy"]
-qiime2_version = "2026.1"
+```bash
+cp -R templates/pipeline pipelines/community/<slug>
 ```
 
-## Submitting
+## `metadata.toml`
+
+The catalog metadata is intentionally small. Today it must include:
+
+```toml
+maintainers = ["@github-handle"]
+tags = ["amplicon", "dada2"]
+```
+
+The validator currently requires:
+
+- `maintainers`
+- `tags`
+- a lowercase slug directory name using letters, numbers, and hyphens
+
+## `README.md`
+
+Even when it is optional, include a README whenever the workflow has assumptions that are not obvious from the graph alone.
+
+Recommended sections:
+
+- summary
+- inputs
+- outputs
+- notes
+- runtime requirements, if any
+
+## Local validation
+
+Before opening a PR:
+
+```bash
+cd adagio-pipelines
+uv sync
+uv run python scripts/validate_repo.py
+```
+
+## Submission flow
 
 1. Fork the [adagio-pipelines](https://github.com/cymis/adagio-pipelines) repository.
 2. Create a directory under `pipelines/community/<your-slug>/`.
-3. Add `pipeline.adg` and `metadata.toml` (and optionally `README.md`).
+3. Add `pipeline.adg`, `metadata.toml`, and a `README.md` when appropriate.
 4. Open a pull request.
 
 GitHub Actions will automatically validate your submission. The validator checks:
 
-- Required files are present
-- `metadata.toml` is complete and consistent
-- The pipeline file is a valid Adagio pipeline shape
+- required files are present
+- `metadata.toml` is complete and correctly typed
+- the pipeline file is a valid Adagio pipeline shape
 
 Fix any validation errors reported in the PR checks before requesting review.
 
+## Runtime requirements and custom images
+
+Do not put runtime image overrides into `metadata.toml`.
+
+If your pipeline depends on:
+
+- a custom Docker image
+- an Apptainer image
+- a plugin that is not in the default image set
+
+document that in `README.md` and include a sample runtime config for `adagio run`.
+
+## Community vs official submissions
+
+External contributors should not open first-time submissions directly under `pipelines/official/`.
+
+If you think a workflow should become official:
+
+1. submit it as a community pipeline first
+2. make the README and maintenance expectations strong enough for broader use
+3. ask maintainers about promotion in the PR or in a follow-up issue
+
+Promotion to official is done by maintainers by moving the directory into `pipelines/official/`.
+
 ## Tips for a good submission
 
-- Give your pipeline a clear, descriptive name and description.
+- Give your pipeline a clear, descriptive purpose.
 - Use specific tags so users can find it when browsing.
-- Include a `README.md` explaining what the pipeline does, what inputs it expects, and what outputs it produces.
+- Include a `README.md` explaining what the pipeline does, what inputs it expects, what outputs it produces, and any runtime assumptions.
 - Test the pipeline end-to-end with real data before submitting.
+- Avoid publishing a community pipeline that only you can run because it depends on a private plugin with no instructions.

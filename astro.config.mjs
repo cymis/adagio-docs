@@ -25,6 +25,8 @@ export default defineConfig({
           items: [
             { label: 'The Pipeline Canvas', slug: 'building/canvas' },
             { label: 'Working with Nodes', slug: 'building/nodes' },
+            { label: 'Connections and Semantic Types', slug: 'building/connections-and-types' },
+            { label: 'Inputs, Parameters, and Defaults', slug: 'building/inputs-parameters-and-defaults' },
             { label: 'Managing Pipelines', slug: 'building/managing' },
           ],
         },
@@ -33,15 +35,17 @@ export default defineConfig({
           items: [
             { label: 'From the UI', slug: 'running/from-ui' },
             { label: 'With the CLI', slug: 'running/cli' },
-            { label: 'CLI Configuration', slug: 'running/cli-config' },
+            { label: 'Runtime Configuration', slug: 'running/cli-config' },
+            { label: 'Cache Behavior', slug: 'running/cache' },
           ],
         },
         {
           label: 'Contributing',
           items: [
-            { label: 'Building a Plugin', slug: 'contributing/building-a-plugin' },
-            { label: 'Submitting a Plugin', slug: 'contributing/submitting-a-plugin' },
+            { label: 'Plugin Development Resources', slug: 'contributing/building-a-plugin' },
+            { label: 'Registering and Submitting a Plugin', slug: 'contributing/submitting-a-plugin' },
             { label: 'Submitting a Pipeline', slug: 'contributing/submitting-a-pipeline' },
+            { label: 'Developer Workflow', slug: 'contributing/developer-workflow' },
           ],
         },
       ],

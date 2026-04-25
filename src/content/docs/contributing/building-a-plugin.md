@@ -1,83 +1,67 @@
 ---
-title: Building a Plugin
-description: How to create a custom plugin action for Adagio
+title: Plugin Development Resources
+description: What Adagio expects from a QIIME 2 plugin
 ---
 
-Adagio plugins are QIIME2 plugins. If you are familiar with QIIME2 plugin development, the process is the same — Adagio discovers and registers your plugin's actions through the standard QIIME2 interface.
+Adagio does not define a separate plugin authoring model. An Adagio plugin is a standard QIIME 2 plugin.
 
-## Prerequisites
+If you need to build or modify a plugin, use the official QIIME 2 developer documentation:
 
-- Python 3.10+
-- A working QIIME2 development environment
-- Familiarity with QIIME2 plugin development (see the [QIIME2 developer docs](https://develop.qiime2.org))
+- [Developer documentation](https://develop.qiime2.org/en/stable/docs/developer-documentation.html)
+- [Plugin tutorial](https://develop.qiime2.org/en/latest/plugins/tutorials/intro.html)
+- [Plugin how-to guides](https://develop.qiime2.org/en/stable/plugins/how-to-guides/intro.html)
 
-## Plugin structure
+## What Adagio needs from a plugin
 
-A QIIME2 plugin defines:
+For a plugin to work well in Adagio, it must provide a clean QIIME 2 interface:
 
-- **Actions** — functions that transform data, each with typed inputs, parameters, and outputs.
-- **Semantic types** — the data types your actions consume and produce.
-- **Formats** — how data is stored on disk.
+- clear action names
+- accurate input, parameter, and output definitions
+- semantic types that express connection compatibility correctly
+- defaults that reflect how the action should appear in the builder
+- metadata handling that works through standard QIIME 2 signatures
 
-Adagio uses this information to present your actions as nodes on the pipeline canvas, enforce type-compatible connections, and resolve the correct container image at run time.
+Adagio uses that information to:
 
-## Creating a plugin
+- build the node catalog in the UI
+- validate connections
+- render parameter controls
+- generate CLI flags for promoted parameters
+- resolve runtime environments for execution
 
-Follow the [QIIME2 plugin tutorial](https://develop.qiime2.org/en/latest/plugins/tutorials/create-from-scratch.html) to scaffold and implement your plugin. The key requirement for Adagio compatibility is that your plugin is a valid, installable QIIME2 plugin.
+## Adagio-specific execution requirements
 
-## Packaging for Adagio
+In addition to the plugin itself, you need a container image that can run it.
 
-Adagio runs each plugin action in its own Docker container. To integrate with the default image resolver, your plugin image should follow the naming convention:
+Adagio's default resolver expects Docker images named like:
 
-```
+```text
 ghcr.io/cymis/qiime2-plugin-<plugin-name>:<tag>
 ```
 
-A Dockerfile for a plugin image typically looks like:
+If you are not using that default image set, you can still run the plugin by supplying a runtime config. See [Runtime Configuration](/running/cli-config/).
 
-```dockerfile
-FROM quay.io/qiime2/amplicon:2026.1
-RUN pip install my-qiime2-plugin
-RUN qiime dev refresh-cache
-```
-
-Build and test your image locally before submitting:
+After installing or updating a plugin in a QIIME 2 environment, refresh the framework cache:
 
 ```bash
-docker build . -t my-plugin:dev
+qiime dev refresh-cache
 ```
 
-Then test it with a local runtime config:
+## When you need to resubmit QAPI
 
-```toml
-version = 1
+Resubmit your plugin metadata to Adagio when the interface changes in a way the builder or CLI must learn about.
 
-[plugins]
-my-plugin = { image = "my-plugin:dev" }
-```
+Examples:
 
-```bash
-adagio run --pipeline test-pipeline.adg --cache-dir /tmp/cache --config runtime.toml
-```
+- plugin name changes
+- action name changes
+- inputs, parameters, or outputs are added, removed, or renamed
+- semantic types change
+- defaults change
 
-## Registering your plugin with Adagio
+If you only change implementation details inside the container and the interface stays the same, you usually do **not** need to resubmit QAPI. Rebuild or retag the container image instead.
 
-Once your plugin image is built and published, register it with your Adagio instance:
+## Next steps
 
-```bash
-adagio build-qapi --action-url http://your-adagio-instance/api/v1
-```
-
-This reads the active QIIME2 environment (which must have your plugin installed) and submits the plugin's action metadata to Adagio. After registration, your plugin's actions appear in the node panel in Lattice.
-
-For a dry run that writes the payload to disk without submitting:
-
-```bash
-adagio build-qapi --output qapi.json --dry-run
-```
-
-To register only specific plugins:
-
-```bash
-adagio build-qapi --action-url http://your-adagio-instance/api/v1 --plugin my-plugin
-```
+- To make a plugin available in Adagio, read [Registering and Submitting a Plugin](/contributing/submitting-a-plugin/).
+- To see the full development loop from plugin changes to local pipeline runs, read [Developer Workflow](/contributing/developer-workflow/).

@@ -3,43 +3,94 @@ title: Quick Start
 description: Build and run your first pipeline
 ---
 
-This guide walks you through building a simple pipeline in Adagio and running it.
+This guide walks through the shortest end-to-end Adagio workflow:
 
-## 1. Open Adagio
+- add actions to the canvas
+- connect them into a valid graph
+- expose the right run-time inputs and parameters
+- run the pipeline
+- export the pipeline for CLI use
 
-Navigate to your Adagio instance in the browser and log in.
+## 1. Open the pipeline editor
+
+Sign in to your Adagio instance and create a new pipeline.
 
 ## 2. Create a new pipeline
 
-From the home screen, click **New Pipeline**. This opens the pipeline canvas — an empty workspace where you'll connect analysis steps.
+The editor has three main areas:
 
-## 3. Add nodes
+- the action tray on the left
+- the canvas in the middle
+- the inspector on the right
 
-Nodes represent individual analysis actions. To add one:
+## 3. Add actions
 
-1. Open the node panel on the left sidebar.
-2. Browse or search for the action you want (e.g., "Import", "Denoise", "Classify").
-3. Click or drag the action onto the canvas.
+Each action is one plugin method or pipeline. To add one:
 
-Each node shows its input ports on the left and output ports on the right.
+1. Browse or search in the action tray.
+2. Add an action such as `demux`, `dada2`, or another plugin action relevant to your workflow.
+3. Repeat until the core steps of your analysis are on the canvas.
 
 ## 4. Connect nodes
 
-To connect two nodes, click an output port on one node and drag to an input port on another. A connection is valid when the data types are compatible — Adagio will highlight which ports can accept the connection.
+Connect an output port to a downstream input port.
 
-Repeat until your pipeline is complete.
+Adagio only accepts type-compatible connections. If a port does not highlight as a valid target, the semantic types do not match. See [Connections and Semantic Types](/building/connections-and-types/).
 
-## 5. Run the pipeline
+## 5. Promote the run-time interface
+
+For each required input that should come from the runner rather than another node:
+
+1. Select the unconnected input port.
+2. Click **Promote Input**.
+
+For each parameter that should stay configurable at run time:
+
+1. Select the node.
+2. In the parameter controls, enable **Promote**.
+3. Optionally assign a default later from the pipeline summary.
+
+Anything you do not promote stays fixed in the pipeline.
+
+## 6. Save and verify
+
+Use the **To-do** tab to clear validation issues.
+
+Adagio blocks pipeline download until the graph has no remaining required-input, required-parameter, or naming problems.
+
+## 7. Run from the UI
 
 Click **Run** in the toolbar. Adagio will prompt you to provide values for any required inputs and parameters that have no defaults. Once submitted, you can watch each step complete in the run view.
 
-Results are written to the output directory you specify. Completed steps are cached — if you adjust parameters and rerun, only the affected steps re-execute.
+The run form has two parts:
 
-## 6. Save the pipeline
+- **Run arguments** for files and promoted parameters
+- **Run configuration** for the analysis name, compute settings, and account
 
-Click **Save** to store the pipeline. Saved pipelines can be:
+## 8. Export the pipeline
 
-- Reopened and edited in the canvas
-- Run again with different inputs
-- Downloaded as a `.adg` file and run from the [CLI](/running/cli/)
-- [Submitted to the community catalog](/contributing/submitting-a-pipeline/)
+From the editor you can export:
+
+- the pipeline itself as a `.adg` file
+- an arguments JSON template for CLI runs
+
+The arguments export captures the current parameter values and input file names. Before using it with the CLI, replace those file names with real local paths.
+
+## 9. Run the same pipeline with the CLI
+
+Typical flow:
+
+```bash
+adagio pipeline show my-pipeline.adg
+
+adagio run \
+  --pipeline my-pipeline.adg \
+  --arguments my-arguments.json \
+  --cache-dir ./adagio-cache
+```
+
+Next:
+
+- [The Pipeline Canvas](/building/canvas/)
+- [Inputs, Parameters, and Defaults](/building/inputs-parameters-and-defaults/)
+- [Running with the CLI](/running/cli/)

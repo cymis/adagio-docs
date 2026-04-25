@@ -3,27 +3,60 @@ title: Running from the UI
 description: Submitting and monitoring pipeline runs in the browser
 ---
 
-Pipelines can be run directly from the Adagio web interface without any additional setup.
+Use the UI when you want Adagio to manage uploads, compute-account selection, and run monitoring.
 
 ## Starting a run
 
 From the home screen, click **Run** next to a saved pipeline. You can also run directly from the canvas by clicking **Run** in the toolbar.
 
-Adagio will open the run configuration panel, which shows:
+The run flow has two steps.
 
-- **Required inputs** — files or data that must be provided before the run can start.
-- **Open parameters** — any parameters that were left configurable when the pipeline was built.
-- **Output location** — where results will be written.
+## Step 1: Run arguments
 
-Fill in the required values and click **Submit**.
+The first step shows:
+
+- **Required inputs**: files or data that must be provided before the run can start
+- **Open parameters**: any parameters that were left configurable when the pipeline was built
+
+Defaults on promoted parameters are prefilled. Promoted parameters with no default are required.
 
 ## Providing inputs
 
-For each required input, you will be prompted to upload a file or select one you have previously uploaded. Adagio accepts QIIME2 artifact files (`.qza`) and metadata files (`.tsv`, `.csv`) depending on what the pipeline expects.
+For each required input, upload the file the pipeline expects.
+
+Common cases include:
+
+- QIIME 2 artifacts such as `.qza`
+- metadata tables such as `.tsv` or `.csv`
+
+The semantic type of the input tells you what shape of data is expected.
+
+## Exporting an arguments JSON template
+
+From the run arguments step you can export a JSON template for CLI use.
+
+Important: this export records the current input file names, not absolute local paths or Adagio upload tokens. Replace those file names with real local paths before running the pipeline with `adagio run`.
+
+## Step 2: Run configuration
+
+The second step captures the UI-specific execution settings:
+
+- analysis name
+- analysis description
+- CPU
+- RAM
+- disk
+- account
+
+These settings are for the Adagio-managed run. They are not part of the exported `.adg` pipeline file.
+
+## Submitting the run
+
+After both steps are complete, submit the run. Adagio uploads the selected files, creates the analysis record, and starts execution against the selected account.
 
 ## Monitoring progress
 
-After submitting, the run view shows each pipeline step with a status indicator:
+The run view shows each pipeline step with a status indicator:
 
 | Status | Meaning |
 |--------|---------|
@@ -36,7 +69,7 @@ Click any step to see its log output. If a step fails, the log will include the 
 
 ## Results
 
-When the run completes, results are available in the run view. You can download individual output files or the full output set.
+When the run completes, results are available in the run view. You can download individual artifacts from there.
 
 ## Reruns and caching
 
@@ -46,4 +79,9 @@ To force a full rerun from scratch, choose **Rerun (no cache)** from the run men
 
 ## Downloading for CLI use
 
-From the run configuration panel you can download an **arguments file** — a JSON file that captures the inputs and parameters you specified. This file can be passed directly to the `adagio` CLI to reproduce the same run outside the browser. See [Running with the CLI](/running/cli/).
+For CLI execution, export:
+
+- the pipeline `.adg` file from the editor
+- an arguments JSON template from the run arguments step
+
+Then use [Running with the CLI](/running/cli/) and [Runtime Configuration](/running/cli-config/) to run the same workflow locally.
