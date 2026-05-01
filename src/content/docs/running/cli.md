@@ -40,6 +40,8 @@ Download the `.adg` file from the Adagio UI:
 1. Open the pipeline in the canvas.
 2. Download the pipeline.
 
+You can also run shared catalog pipelines by reference, for example `@adagio/microbial-diversity`. See [Pipeline Channels](/running/pipeline-channels/).
+
 ## Inspecting a pipeline
 
 Before running, inspect the pipeline interface:
@@ -76,6 +78,16 @@ The required pieces are:
 - `--cache-dir`: the shared QIIME cache directory
 
 By default, outputs go to `./adagio-outputs`.
+
+The pipeline can also be a channel reference:
+
+```bash
+adagio run \
+  @adagio/microbial-diversity \
+  --cache-dir /path/to/cache
+```
+
+Use this when you want to run a community or official catalog pipeline without downloading the `.adg` file first.
 
 ## Providing inputs
 
@@ -171,9 +183,46 @@ Use `--config` when you need to:
 - pin a plugin to a specific image tag
 - use a locally built or private image
 - run some actions with Apptainer
+- force Docker to run `linux/amd64` images on Apple Silicon
 - override one task without changing the rest of the pipeline
 
 See [Runtime Configuration](/running/cli-config/).
+
+On Apple Silicon, Docker may report that an image has no `linux/arm64/v8` manifest. In that case, run the plugin containers as `linux/amd64` with a runtime config:
+
+```toml
+version = 1
+
+[defaults]
+kind = "docker"
+platform = "linux/amd64"
+```
+
+Then pass that config when running:
+
+```bash
+adagio run \
+  --pipeline path/to/pipeline.adg \
+  --cache-dir /path/to/cache \
+  --config runtime.toml
+```
+
+You can also pre-pull or check a task image with the same platform:
+
+```bash
+docker pull --platform linux/amd64 ghcr.io/cymis/qiime2-plugin-feature-table:2026.1
+```
+
+If the pipeline itself comes from a custom channel, keep channel resolution and runtime images separate:
+
+```bash
+adagio run \
+  @my-personal-channel/microbial-diversity \
+  --cache-dir /path/to/cache \
+  --config runtime.toml
+```
+
+See [Pipeline Channels](/running/pipeline-channels/) for configuring `@my-personal-channel`.
 
 ## Cache management
 

@@ -7,6 +7,14 @@ Pipelines you build in Adagio can be shared through the `adagio-pipelines` catal
 
 New external submissions start in the community catalog. Promotion to official is a separate maintainer decision.
 
+After a pipeline is merged into the shared catalog, CLI users can run it by slug:
+
+```bash
+adagio run @adagio/<slug> --cache-dir /path/to/cache
+```
+
+For private, lab, or project catalogs, users can configure their own channels such as `@my-lab/<slug>`. See [Pipeline Channels](/running/pipeline-channels/).
+
 ## Catalog states
 
 | State | Path | Meaning |
@@ -92,6 +100,16 @@ If your pipeline depends on:
 - a plugin that is not in the default image set
 
 document that in `README.md` and include a sample runtime config for `adagio run`.
+
+Example:
+
+```bash
+adagio run \
+  @adagio/<slug> \
+  --cache-dir /path/to/cache \
+  --arguments run-arguments.json \
+  --config runtime.toml
+```
 
 ## Community vs official submissions
 

@@ -102,13 +102,29 @@ version = 1
 
 ### Force a specific Docker platform
 
-Useful on Apple Silicon when tasks must run as `linux/amd64`:
+Useful on Apple Silicon when the published plugin image only has a `linux/amd64` manifest:
 
 ```toml
 version = 1
 
 [defaults]
+kind = "docker"
 platform = "linux/amd64"
+```
+
+Pass that file with `--config` when running the pipeline:
+
+```bash
+adagio run \
+  --pipeline pipeline.adg \
+  --cache-dir /cache \
+  --config runtime.toml
+```
+
+You can check or pre-pull a plugin image with the same platform:
+
+```bash
+docker pull --platform linux/amd64 ghcr.io/cymis/qiime2-plugin-feature-table:2026.1
 ```
 
 ### Use Apptainer instead of Docker

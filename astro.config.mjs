@@ -35,6 +35,7 @@ export default defineConfig({
           items: [
             { label: 'From the UI', slug: 'running/from-ui' },
             { label: 'With the CLI', slug: 'running/cli' },
+            { label: 'Pipeline Channels', slug: 'running/pipeline-channels' },
             { label: 'Runtime Configuration', slug: 'running/cli-config' },
             { label: 'Cache Behavior', slug: 'running/cache' },
           ],
