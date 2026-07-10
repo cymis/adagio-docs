@@ -53,7 +53,7 @@ Before using that file with `adagio run`, replace the input values with real loc
 
 Pipelines published by the community are available in the **Explore** section. You can open any community pipeline, run it directly, or fork it to your own workspace to customize it.
 
-From the CLI, shared catalog pipelines can also be run by channel reference, such as `@adagio/microbial-diversity`. See [Pipeline Channels](/running/pipeline-channels/).
+From the CLI, shared catalog pipelines can also be run by reference, such as `@adagio/microbial-diversity`. See [Catalog Pipelines](/running/pipeline-channels/).
 
 To publish your own pipeline to the community, see [Submitting a Pipeline](/contributing/submitting-a-pipeline/).
 

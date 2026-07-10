@@ -40,7 +40,7 @@ Download the `.adg` file from the Adagio UI:
 1. Open the pipeline in the canvas.
 2. Download the pipeline.
 
-You can also run shared catalog pipelines by reference, for example `@adagio/microbial-diversity`. See [Pipeline Channels](/running/pipeline-channels/).
+You can also run shared catalog pipelines by reference, for example `@adagio/microbial-diversity`. See [Catalog Pipelines](/running/pipeline-channels/).
 
 ## Inspecting a pipeline
 
@@ -213,16 +213,16 @@ You can also pre-pull or check a task image with the same platform:
 docker pull --platform linux/amd64 ghcr.io/cymis/qiime2-plugin-feature-table:2026.1
 ```
 
-If the pipeline itself comes from a custom channel, keep channel resolution and runtime images separate:
+If the pipeline itself comes from the catalog, keep pipeline resolution and runtime images separate:
 
 ```bash
 adagio run \
-  @my-personal-channel/microbial-diversity \
+  @adagio/microbial-diversity \
   --cache-dir /path/to/cache \
   --config runtime.toml
 ```
 
-See [Pipeline Channels](/running/pipeline-channels/) for configuring `@my-personal-channel`.
+See [Catalog Pipelines](/running/pipeline-channels/) for `@adagio/<slug>` resolution.
 
 ## Cache management
 

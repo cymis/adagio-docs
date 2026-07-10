@@ -1,6 +1,6 @@
 ---
 title: Runtime Configuration
-description: Customizing task environments for Docker and Apptainer execution
+description: Customizing task environments for Docker, Apptainer, and conda execution
 ---
 
 By default, the CLI resolves each plugin action to a Docker image derived from the plugin name:
@@ -15,6 +15,7 @@ Use a runtime config when you need to:
 
 - run a plugin from your own Docker image
 - pin one plugin to a different tag
+- run tasks in an existing conda environment
 - use Apptainer or Singularity on HPC
 - override one task in an otherwise standard pipeline
 
@@ -145,7 +146,50 @@ Rules:
 - for `apptainer`, `image` must be a local `.sif` path
 - Adagio prefers the `apptainer` executable and falls back to `singularity`
 
-### Mix Docker and Apptainer
+### Use a conda environment
+
+For local development or shared systems where a QIIME 2 conda environment is already installed, Adagio can run tasks with `conda run`.
+
+Use `environment` for a named conda environment:
+
+```toml
+version = 1
+
+[defaults]
+kind = "conda"
+environment = "rachis-qiime2-2026.4"
+```
+
+Use `prefix` instead when the environment should be selected by filesystem path:
+
+```toml
+version = 1
+
+[defaults]
+kind = "conda"
+prefix = "/opt/conda/envs/rachis-qiime2-2026.4"
+```
+
+Rules:
+
+- `kind` can be `docker`, `apptainer`, or `conda`
+- the conda environment must already exist
+- the conda environment must contain QIIME 2 and the plugins required by the tasks that use it
+- Adagio enters the environment with `conda run`; it does not create or update the environment
+- set `conda_executable` when `conda` is not on `PATH`, or set `ADAGIO_CONDA_EXE` in the shell
+
+For example:
+
+```toml
+version = 1
+
+[defaults]
+kind = "conda"
+environment = "rachis-qiime2-2026.4"
+conda_executable = "/opt/conda/bin/conda"
+```
+
+### Mix Docker, Apptainer, and conda
 
 ```toml
 version = 1
@@ -157,6 +201,18 @@ kind = "docker"
 dada2 = { image = "ghcr.io/cymis/qiime2-plugin-dada2:2026.1" }
 my_plugin = { kind = "apptainer", image = "/shared/images/my-plugin.sif" }
 ```
+
+You can also mix execution environments per task. This config runs `demux emp-single` in Docker and `dada2 denoise-single` in the named conda environment:
+
+```toml
+version = 1
+
+[tasks]
+"demux.emp_single" = { kind = "docker", image = "ghcr.io/cymis/qiime2-plugin-demux:2026.4" }
+"dada2.denoise_single" = { kind = "conda", environment = "rachis-qiime2-2026.4" }
+```
+
+Task keys use the exported `plugin.action` names. QIIME 2 action names that are written with hyphens in prose are usually stored with underscores in the pipeline, so `emp-single` becomes `emp_single` and `denoise-single` becomes `denoise_single`.
 
 ## What runtime config does not do
 
@@ -171,6 +227,9 @@ Runtime config affects execution only. It does not:
 
 | Key | Applies to | Values | Description |
 |-----|-----------|--------|-------------|
-| `kind` | defaults, plugins, tasks | `docker`, `apptainer` | task runner to use |
-| `image` | defaults, plugins, tasks | image ref or `.sif` path | container image to use |
+| `kind` | defaults, plugins, tasks | `docker`, `apptainer`, `conda` | task runner to use |
+| `image` | defaults, plugins, tasks | image ref or `.sif` path | container image to use for Docker or Apptainer |
 | `platform` | defaults, plugins, tasks | e.g. `linux/amd64` | Docker platform override |
+| `environment` | defaults, plugins, tasks | conda environment name | named conda environment to run with `conda run -n` |
+| `prefix` | defaults, plugins, tasks | conda environment path | conda environment path to run with `conda run -p` |
+| `conda_executable` | defaults, plugins, tasks | path to `conda` | conda executable override |

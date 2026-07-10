@@ -13,7 +13,7 @@ After a pipeline is merged into the shared catalog, CLI users can run it by slug
 adagio run @adagio/<slug> --cache-dir /path/to/cache
 ```
 
-For private, lab, or project catalogs, users can configure their own channels such as `@my-lab/<slug>`. See [Pipeline Channels](/running/pipeline-channels/).
+See [Catalog Pipelines](/running/pipeline-channels/) for how `@adagio/<slug>` is resolved by the CLI.
 
 ## Catalog states
 
