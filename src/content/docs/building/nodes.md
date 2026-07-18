@@ -19,6 +19,11 @@ Each node has:
 - **Output ports**: typed values the action produces
 - **Parameters**: configuration values that can be fixed in the pipeline or promoted to run time
 
+Connected local-plugin nodes also show **Refresh `<plugin>` interface**. Refresh
+is available only for a private local plugin backed by a usable Conda
+environment. Starting it from one node refreshes every action and node from that
+plugin.
+
 ## Connecting nodes
 
 Drag from an **output port** to an **input port** to create a connection. Adagio enforces type compatibility, so a port only accepts compatible outputs.

@@ -18,13 +18,16 @@ qiime dev refresh-cache
 
 This environment is what `adagio qapi build` will inspect.
 
-## 3. Build or update the execution image
+## 3. Connect the editable plugin in Adagio Desktop
 
-Create the Docker image or `.sif` image that should actually run the plugin action.
+Open **Plugin management** in Adagio Desktop, choose **Connect plugin**, and select
+the Conda environment that contains the editable plugin. Adagio inspects the
+environment, builds its QAPI metadata locally, and creates a private plugin entry.
 
-Use the default GHCR naming convention if you want it to work with Adagio's built-in image resolver. Otherwise plan to supply a runtime config during local execution.
+The connected plugin remembers that Conda environment. Nodes from the plugin use
+it by default when you run from the editor.
 
-## 4. Register the plugin in Adagio
+The CLI submission flow remains useful when you are not using the desktop app:
 
 Create a QAPI submission token in the Adagio UI, then submit:
 
@@ -38,7 +41,7 @@ adagio qapi build --plugin my-plugin
 
 This gives you a private plugin entry in Adagio so you can use the plugin in the builder.
 
-## 5. Build the pipeline in the Adagio UI
+## 4. Build the pipeline in the Adagio UI
 
 Now you can:
 
@@ -46,7 +49,39 @@ Now you can:
 - connect them
 - promote the inputs and parameters you want exposed at run time
 
-## 6. Download and run locally
+## 5. Iterate on implementation code
+
+Connected local-plugin actions always execute fresh. If you change library or
+implementation code without changing the registered action interface, run the
+node or pipeline again. You do not need to refresh its interface first.
+
+Other nodes retain normal cache behavior. In an
+official → local → official pipeline, the unchanged upstream official action can
+be reused, the local action executes fresh, and the downstream official action
+uses the normal cache-signature rules.
+
+## 6. Refresh interface changes
+
+When you add or remove an action, or change inputs, parameters, outputs, types,
+or defaults:
+
+1. Run `qiime dev refresh-cache` in the connected Conda environment.
+2. In the editor, use **Refresh `<plugin>` interface** on any node from that
+   plugin. You can also refresh it from **Plugin management**.
+3. Review any compatibility warning shown after the editor reloads.
+
+Refresh is plugin-wide even when you start it from one node: Adagio rebuilds
+metadata for every action in that plugin, and every node from that plugin shows
+the same loading state. Pending pipeline edits are saved before refresh.
+
+If an action was removed or its ports changed, Adagio preserves the existing
+nodes and connections and reports what needs attention. It does not silently
+delete or rewire the pipeline.
+
+Refresh is unavailable while an analysis is running. If the save or refresh
+fails, the current editor remains open with an error.
+
+## 7. Download and run locally
 
 Export:
 
@@ -62,23 +97,6 @@ adagio run \
   --config runtime.toml \
   --cache-dir ./adagio-cache
 ```
-
-## 7. Iterate
-
-You only need to resubmit QAPI when the interface changes.
-
-Examples of interface changes:
-
-- plugin or action name changed
-- input, parameter, or output names changed
-- semantic types changed
-- defaults changed
-
-If you changed implementation only, you usually just need to:
-
-- rebuild or retag the image
-- update the runtime config if the image reference changed
-- rerun the pipeline locally
 
 ## 8. Submit public artifacts when ready
 

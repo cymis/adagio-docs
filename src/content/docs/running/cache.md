@@ -30,6 +30,28 @@ That means:
 - change one downstream parameter and upstream unchanged tasks can still be reused
 - change an early input or parameter and all dependent downstream tasks will rerun
 
+## Connected local plugins
+
+Actions from a connected local or developer plugin always execute fresh because
+the code in their Conda environment can change in place. Their presence does not
+disable caching for the rest of the pipeline.
+
+| Node                              | Cache behavior              |
+| --------------------------------- | --------------------------- |
+| Upstream official plugin          | May reuse a matching result |
+| Connected local plugin            | Always executes fresh       |
+| Downstream official plugin        | Normal cache eligibility    |
+| Any node when global reuse is off | Executes fresh              |
+
+"Normal cache eligibility" means the downstream node is not automatically
+disabled. If the fresh local-plugin output changes its cache signature, the
+downstream node runs again. If it produces an identical cacheable input, reuse is
+allowed.
+
+The per-node **Use cache** control can force any other node fresh. On local-plugin
+nodes it is locked off with an explanation. The global cache control remains
+available; turning it off still forces the entire pipeline to execute fresh.
+
 ## Reuse is enabled by default
 
 Normal behavior:
@@ -45,6 +67,7 @@ adagio run --pipeline pipeline.adg --cache-dir ./cache --no-reuse
 ```
 
 `--no-reuse` keeps the run from loading matching prior results from the selected cache.
+It overrides all selective behavior and forces every task fresh.
 
 ## Choosing a cache location
 
