@@ -58,12 +58,12 @@ After both steps are complete, submit the run. Adagio uploads the selected files
 
 The run view shows each pipeline step with a status indicator:
 
-| Status | Meaning |
-|--------|---------|
-| Pending | Waiting to start |
-| Running | Currently executing |
+| Status   | Meaning               |
+| -------- | --------------------- |
+| Pending  | Waiting to start      |
+| Running  | Currently executing   |
 | Complete | Finished successfully |
-| Failed | Encountered an error |
+| Failed   | Encountered an error  |
 
 Click any step to see its log output. If a step fails, the log will include the error message to help diagnose the problem.
 
@@ -75,7 +75,12 @@ When the run completes, results are available in the run view. You can download 
 
 If you rerun a pipeline with the same inputs but different parameters, only the steps affected by the change re-execute. Upstream steps whose inputs have not changed are replayed from cache automatically.
 
-To force a full rerun from scratch, choose **Rerun (no cache)** from the run menu.
+Connected local-plugin actions are the exception: they always execute fresh so
+library-code changes are picked up immediately. Official actions before and
+after them keep normal cache eligibility. You can also turn off **Use cache** for
+an individual non-local node.
+
+To force a full rerun from scratch, turn off the global **Use cache** control.
 
 ## Downloading for CLI use
 
