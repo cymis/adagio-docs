@@ -41,6 +41,13 @@ export default defineConfig({
           ],
         },
         {
+          label: 'AI Integrations',
+          items: [
+            { label: 'Adagio for ChatGPT and Codex', slug: 'integrations/adagio-ai' },
+            { label: 'Privacy and Data Boundaries', slug: 'integrations/ai-privacy' },
+          ],
+        },
+        {
           label: 'Contributing',
           items: [
             { label: 'Plugin Development Resources', slug: 'contributing/building-a-plugin' },

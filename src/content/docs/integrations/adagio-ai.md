@@ -1,0 +1,85 @@
+---
+title: Adagio for ChatGPT and Codex
+description: Install, authorize, use, revoke, and troubleshoot the official Adagio plugin
+---
+
+The official Adagio plugin lets ChatGPT and Codex inspect, create, validate, and safely edit pipelines in your Adagio account. It uses the universal plugin model shared by supported OpenAI surfaces.
+
+:::note[Publication status]
+The hosted integration is being prepared for OpenAI review. Until the official listing URL is published, Adagio links here instead of claiming the plugin is already available in the directory.
+:::
+
+## Install and connect
+
+1. Install Adagio Desktop, open it, and sign in.
+2. Choose **Use Adagio with ChatGPT and Codex** from the Adagio menu or **Use Adagio with AI** inside the app.
+3. Open the official Adagio listing and install the plugin.
+4. Choose **Connect** when ChatGPT or Codex requests access.
+5. In the browser, review the requested Adagio permissions and approve them.
+6. Start a new task so the newly installed plugin and skills are available.
+
+Installation occurs in ChatGPT or Codex. Account authorization occurs through Adagio. Adagio cannot claim that the plugin is installed because OpenAI does not expose that state to the Adagio application.
+
+Try one of these prompts:
+
+- “Explain the pipeline I most recently edited in Adagio.”
+- “Show me my Adagio pipelines.”
+- “Validate this pipeline and tell me what still needs user input.”
+- “Find an installed action compatible with this output.”
+
+Tool results include a canonical **Open in Adagio** HTTPS link when they correspond to a pipeline or plugin page.
+
+## What the first release can do
+
+- list and inspect your pipelines
+- search the action catalog and fetch exact action specifications
+- check semantic-type compatibility
+- validate pipelines
+- create pipelines and make reviewed, conflict-aware edits
+- add a community plugin to your library only through the existing explicit consent flow
+
+The hosted plugin does not execute pipelines, read local files, inspect local run-output folders, control the Desktop interface, or access raw biological artifacts. Adagio Desktop remains responsible for local execution.
+
+## Review and consent
+
+Read-only operations can run after authorization. Before a consequential change, ask the assistant to show the proposed stages or diff. Removing or replacing steps and other difficult-to-reverse operations require explicit review. Browser and assistant writers use the same optimistic-concurrency token, so a stale assistant edit fails instead of overwriting a newer browser change.
+
+Community plugins contain third-party code that runs locally. The assistant must ask every time before starting the protected add-to-library consent flow. If ChatGPT or Codex cannot show that approval interaction, the tool returns a secure Adagio approval URL; approval is never silently weakened.
+
+Pipelines written through the hosted integration display **Created with Codex** or **Last edited through Adagio AI integration**. Adagio records the operation ID, time, integration identity, and writer/specification version, but not the raw prompt.
+
+## Revoke access
+
+Open **Profile → AI assistants** in Adagio and choose **Revoke access**. Revocation is enforced by Adagio and does not depend on uninstalling the plugin. Existing tokens issued before the revocation stop working; the next use requires authorization again.
+
+## Troubleshooting
+
+### The plugin does not appear
+
+Confirm that your ChatGPT or Codex surface supports universal plugins, that workspace policy permits the Adagio plugin, and that you are signed into the intended OpenAI account. After installation, start a new task.
+
+### Authorization loops or has expired
+
+Revoke the existing connection under **Profile → AI assistants**, then connect again. Check that browser privacy controls allow the Adagio and Cognito authorization pages to complete their redirect. A wrong-client, wrong-audience, expired, malformed, or insufficient-scope token is rejected rather than accepted as a partial session.
+
+### The assistant cannot find a pipeline
+
+Pipeline names are not unique. Ask it to list matching pipelines and choose using the name, modification date, and link. Archived pipelines require an explicit request to include Trash.
+
+### A write reports a conflict
+
+The pipeline changed after the assistant read it. Ask the assistant to fetch the latest version, explain both changes, and propose a reconciliation. Do not ask it to overwrite blindly.
+
+### A local run cannot start
+
+The public plugin does not start runs. Open the pipeline in Adagio Desktop and confirm the local agent status is connected. If Desktop is offline, start it and sign in before running. Pipeline structure work can continue through the hosted plugin while Desktop is offline.
+
+### A workspace blocks authorization
+
+Organization administrators can restrict plugins, domains, or OAuth scopes. Ask the workspace administrator to allow the official Adagio listing and `mcp.adagio.run`; do not work around policy with a personal token.
+
+### Local developer fallback
+
+Adagio Desktop retains **Developer: Configure Local MCP** for engineering and outage fallback. It edits only the local `adagio` MCP entry after parse-and-verify checks and creates a backup. This is distinct from the official hosted plugin and browser authorization flow.
+
+For support, visit [Adagio contact and support](https://adagio.run/contact) or email [contact@adagio.run](mailto:contact@adagio.run). Security issues should go to [security@adagio.run](mailto:security@adagio.run).
