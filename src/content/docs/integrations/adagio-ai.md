@@ -6,19 +6,26 @@ description: Install, authorize, use, revoke, and troubleshoot the official Adag
 The official Adagio plugin lets ChatGPT and Codex inspect, create, validate, and safely edit pipelines in your Adagio account. It uses the universal plugin model shared by supported OpenAI surfaces.
 
 :::note[Publication status]
-The hosted integration is being prepared for OpenAI review. Until the official listing URL is published, Adagio links here instead of claiming the plugin is already available in the directory.
+The hosted integration is being prepared for OpenAI review and is not yet publicly installable. Until the official listing is published, Adagio and Adagio Desktop link to this status page; there is no listing link to follow from here. This page must be deployed before a plugin package or Desktop release that depends on it.
 :::
 
 ## Install and connect
 
-1. Install Adagio Desktop, open it, and sign in.
-2. Choose **Use Adagio with ChatGPT and Codex** from the Adagio menu or **Use Adagio with AI** inside the app.
-3. Open the official Adagio listing and install the plugin.
-4. Choose **Connect** when ChatGPT or Codex requests access.
-5. In the browser, review the requested Adagio permissions and approve them.
-6. Start a new task so the newly installed plugin and skills are available.
+### Before the public listing is available
+
+There is no public installation flow yet. The **Use Adagio with ChatGPT and Codex** links currently open this page so you can confirm availability; they do not lead to another installation page.
+
+### After the official listing is published
+
+1. Open the official Adagio listing from a supported ChatGPT or Codex surface. A future Adagio Desktop release may open the same listing as a convenience.
+2. Install the plugin.
+3. Choose **Connect** when ChatGPT or Codex requests access.
+4. In the browser, review the requested Adagio permissions and approve them.
+5. Start a new task so the newly installed plugin and skills are available.
 
 Installation occurs in ChatGPT or Codex. Account authorization occurs through Adagio. Adagio cannot claim that the plugin is installed because OpenAI does not expose that state to the Adagio application.
+
+Adagio Desktop is optional for the hosted integration. Install and sign in to Desktop only when you want to run pipelines on your computer; the web-hosted inspection and editing flow works without it.
 
 Try one of these prompts:
 
@@ -27,7 +34,7 @@ Try one of these prompts:
 - “Validate this pipeline and tell me what still needs user input.”
 - “Find an installed action compatible with this output.”
 
-Tool results include a canonical **Open in Adagio** HTTPS link when they correspond to a pipeline or plugin page.
+Pipeline tool results include a canonical **Open in Adagio** HTTPS link. Plugin catalog results do not currently include an Adagio page URL.
 
 ## What the first release can do
 
@@ -42,9 +49,9 @@ The hosted plugin does not execute pipelines, read local files, inspect local ru
 
 ## Review and consent
 
-Read-only operations can run after authorization. Before a consequential change, ask the assistant to show the proposed stages or diff. Removing or replacing steps and other difficult-to-reverse operations require explicit review. Browser and assistant writers use the same optimistic-concurrency token, so a stale assistant edit fails instead of overwriting a newer browser change.
+Read-only operations can run after authorization. Before a consequential pipeline change, ask the assistant to show the proposed stages or diff and confirm the change in the conversation. That review is assistant workflow guidance, not a separate server-side approval gate. Browser and assistant writers use the same optimistic-concurrency token, so a stale assistant edit fails instead of overwriting a newer browser change.
 
-Community plugins contain third-party code that runs locally. The assistant must ask every time before starting the protected add-to-library consent flow. If ChatGPT or Codex cannot show that approval interaction, nothing is installed; add that exact plugin in Adagio's Library instead. The assistant must not invent an approval URL or silently weaken consent.
+In the first release, `add_plugin_to_library` is the only tool with a server-side review gate. Community plugins contain third-party code that runs locally, so the assistant must ask every time before starting that protected consent flow. If ChatGPT or Codex cannot show the approval interaction, nothing is installed; add that exact plugin in Adagio's Library instead. The assistant must not invent an approval URL or silently weaken consent.
 
 Pipelines written through the hosted integration display **Created with Codex** or **Last edited through Adagio AI integration**. Adagio records the operation ID, time, integration identity, and writer/specification version, but not the raw prompt.
 
@@ -56,7 +63,7 @@ Open **Profile → AI assistants** in Adagio and choose **Revoke access**. Revoc
 
 ### The plugin does not appear
 
-Confirm that your ChatGPT or Codex surface supports universal plugins, that workspace policy permits the Adagio plugin, and that you are signed into the intended OpenAI account. After installation, start a new task.
+Before publication, this is expected because no public listing or installation flow exists. After publication, confirm that your ChatGPT or Codex surface supports universal plugins, that workspace policy permits the Adagio plugin, and that you are signed into the intended OpenAI account. After installation, start a new task.
 
 ### Authorization loops or has expired
 
@@ -80,7 +87,7 @@ The public plugin does not start runs. Open the pipeline in Adagio Desktop and c
 
 ### A workspace blocks authorization
 
-Organization administrators can restrict plugins, domains, or OAuth scopes. Ask the workspace administrator to allow the official Adagio listing and `mcp.adagio.run`; do not work around policy with a personal token.
+Organization administrators can restrict plugins, domains, or OAuth scopes. After the public listing is available, ask the workspace administrator to allow the official Adagio listing and `mcp.adagio.run`; do not work around policy with a personal token.
 
 ### Local developer fallback
 
