@@ -35,7 +35,7 @@ Tool results include a canonical **Open in Adagio** HTTPS link when they corresp
 - search the action catalog and fetch exact action specifications
 - check semantic-type compatibility
 - validate pipelines
-- create pipelines and make reviewed, conflict-aware edits
+- create pipelines and make reviewed, conflict-aware edits when assistant writes are enabled
 - add a community plugin to your library only through the existing explicit consent flow
 
 The hosted plugin does not execute pipelines, read local files, inspect local run-output folders, control the Desktop interface, or access raw biological artifacts. Adagio Desktop remains responsible for local execution.
@@ -44,7 +44,7 @@ The hosted plugin does not execute pipelines, read local files, inspect local ru
 
 Read-only operations can run after authorization. Before a consequential change, ask the assistant to show the proposed stages or diff. Removing or replacing steps and other difficult-to-reverse operations require explicit review. Browser and assistant writers use the same optimistic-concurrency token, so a stale assistant edit fails instead of overwriting a newer browser change.
 
-Community plugins contain third-party code that runs locally. The assistant must ask every time before starting the protected add-to-library consent flow. If ChatGPT or Codex cannot show that approval interaction, the tool returns a secure Adagio approval URL; approval is never silently weakened.
+Community plugins contain third-party code that runs locally. The assistant must ask every time before starting the protected add-to-library consent flow. If ChatGPT or Codex cannot show that approval interaction, nothing is installed; add that exact plugin in Adagio's Library instead. The assistant must not invent an approval URL or silently weaken consent.
 
 Pipelines written through the hosted integration display **Created with Codex** or **Last edited through Adagio AI integration**. Adagio records the operation ID, time, integration identity, and writer/specification version, but not the raw prompt.
 
@@ -69,6 +69,10 @@ Pipeline names are not unique. Ask it to list matching pipelines and choose usin
 ### A write reports a conflict
 
 The pipeline changed after the assistant read it. Ask the assistant to fetch the latest version, explain both changes, and propose a reconciliation. Do not ask it to overwrite blindly.
+
+### Assistant writes are temporarily unavailable
+
+Adagio can disable assistant creation and editing while leaving read-only tools available. A disabled write returns `assistant_writes_disabled`; retrying will not bypass it. Continue inspecting and validating pipelines, then make the proposed change in Adagio or wait until the integration administrator re-enables assistant writes.
 
 ### A local run cannot start
 
