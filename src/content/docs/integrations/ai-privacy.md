@@ -1,6 +1,6 @@
 ---
 title: AI Integration Privacy and Data Boundaries
-description: What Adagio shares with ChatGPT and Codex, what it excludes, and how records are retained
+description: What Adagio shares with AI assistants (ChatGPT, Codex, and Claude), what it excludes, and how records are retained
 ---
 
 The hosted Adagio plugin is deliberately limited to pipeline structure, catalog metadata, validation results, and information the user explicitly requests through its narrow tools.
@@ -12,7 +12,7 @@ The hosted Adagio plugin is deliberately limited to pipeline structure, catalog 
 - validation findings and unresolved pipeline decisions
 - non-sensitive assistant provenance and canonical Adagio links
 
-This information is sent to the OpenAI product the user chose under that product's account and workspace controls. Review [Adagio's Privacy Policy](https://adagio.run/privacy) and the privacy terms for the OpenAI product and workspace you use.
+This information is sent to the assistant product the user chose — a ChatGPT/Codex surface or Claude — under that product's account and workspace controls. Review [Adagio's Privacy Policy](https://adagio.run/privacy) and the privacy terms for the assistant product and workspace you use.
 
 ## Information excluded by default
 
@@ -26,8 +26,8 @@ The hosted gateway logs a random correlation ID, tool name, status, duration, an
 
 Adagio stores an OAuth connection record containing the integration identity, granted scopes, connection and last-used times, revocation time, and last token issue time. Active records are retained while the connection exists; revoked records are retained for up to 90 days for security investigation and then removed, subject to the normal backup lifecycle. Assistant pipeline provenance remains with the pipeline so users can understand its history.
 
-Raw prompts are not stored by Adagio's MCP integration. Conversation retention is controlled by the OpenAI product and workspace.
+Raw prompts are not stored by Adagio's MCP integration. Conversation retention is controlled by the assistant product and workspace you use.
 
 ## Control and deletion
 
-Revoke ChatGPT/Codex under **Adagio → Profile → AI assistants**. You can request access, correction, or deletion through [privacy@adagio.run](mailto:privacy@adagio.run). Removing the plugin only in ChatGPT or Codex is not a substitute for revoking the Adagio connection.
+Revoke ChatGPT/Codex under **Adagio → Profile → AI assistants**. Claude connections are recorded separately and do not yet appear in that panel: sign out on the Claude side to discard its credentials (tokens are short-lived), and contact [privacy@adagio.run](mailto:privacy@adagio.run) for immediate server-enforced revocation. You can request access, correction, or deletion through [privacy@adagio.run](mailto:privacy@adagio.run). Removing the plugin in the assistant product alone is not a substitute for revoking the Adagio connection.

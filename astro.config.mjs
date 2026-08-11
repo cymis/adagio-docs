@@ -43,7 +43,7 @@ export default defineConfig({
         {
           label: 'AI Integrations',
           items: [
-            { label: 'Adagio for ChatGPT and Codex', slug: 'integrations/adagio-ai' },
+            { label: 'Adagio for AI assistants', slug: 'integrations/adagio-ai' },
             { label: 'Privacy and Data Boundaries', slug: 'integrations/ai-privacy' },
           ],
         },
