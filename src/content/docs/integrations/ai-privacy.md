@@ -30,4 +30,4 @@ Raw prompts are not stored by Adagio's MCP integration. Conversation retention i
 
 ## Control and deletion
 
-Revoke ChatGPT/Codex under **Adagio → Profile → AI assistants**. Claude connections are recorded separately and do not yet appear in that panel: sign out on the Claude side to discard its credentials (tokens are short-lived), and contact [privacy@adagio.run](mailto:privacy@adagio.run) for immediate server-enforced revocation. You can request access, correction, or deletion through [privacy@adagio.run](mailto:privacy@adagio.run). Removing the plugin in the assistant product alone is not a substitute for revoking the Adagio connection.
+Revoke any assistant connection under **Adagio → Profile → AI assistants**; each integration is listed and revoked independently. You can request access, correction, or deletion through [privacy@adagio.run](mailto:privacy@adagio.run). Removing the plugin in the assistant product alone is not a substitute for revoking the Adagio connection.
