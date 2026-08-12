@@ -6,31 +6,41 @@ description: Install, authorize, use, revoke, and troubleshoot the official Adag
 The official Adagio integrations let AI assistants inspect, create, validate, and safely edit pipelines in your Adagio account. One plugin package and one hosted service serve every assistant: ChatGPT and Codex through the universal plugin model on supported OpenAI surfaces, and Claude through the Claude Code plugin. The capabilities, review rules, and privacy boundaries described on this page apply identically to all of them.
 
 :::note[Publication status]
-The ChatGPT and Codex integration is being prepared for OpenAI review and is not yet publicly installable; until the official listing is published, Adagio and Adagio Desktop link to this status page. The Claude integrations are available today: Claude Code installs from the Adagio repository and claude.ai connects as a custom connector, both as described below. A listing in the Claude connectors directory is not yet published; it will add discoverability, not capability.
+The ChatGPT and Codex integration is being prepared for OpenAI review and is not yet publicly installable; until the official listing is published, Adagio and Adagio Desktop link to this status page. The Claude integrations are available today: claude.ai connects as a custom connector and Claude Code connects to the same hosted service, both as described below. The Claude Code plugin package, which adds guided skills on top of the tools, and a listing in the Claude connectors directory are not yet published; both will add convenience, not capability.
 :::
 
 ## Use Adagio with Claude
 
 ### Claude Code
 
-Install the plugin from the Adagio repository — it carries the same skills and connects to the same hosted service as every other surface:
+If you have already connected Adagio on claude.ai, the connector's tools are available in Claude Code sessions signed into the same Claude account — no further setup is needed.
+
+To connect Claude Code directly instead, add the hosted server and authenticate:
 
 ```
-/plugin marketplace add cymis/adagio-app
-/plugin install adagio@adagio
+claude mcp add --transport http adagio https://mcp.adagio.run/mcp
+claude mcp login adagio
 ```
 
-The first time the assistant uses an Adagio tool, Claude Code asks you to authenticate: your browser opens Adagio's sign-in page, you approve the requested permissions, and the session completes automatically. You can also authenticate ahead of time with `claude mcp login plugin:adagio:adagio`. Each Adagio tool then requires your per-call or standing approval in Claude Code's own permission prompts; read-only and write tools are grouped separately.
+Your browser opens Adagio's sign-in page; approve the requested permissions and the session completes automatically. Each Adagio tool then requires your per-call or standing approval in Claude Code's own permission prompts; read-only and write tools are grouped separately.
 
-To sign out on that machine, run `claude mcp logout plugin:adagio:adagio`. Access tokens are short-lived, so signing out ends access promptly.
+To sign out on that machine, run `claude mcp logout adagio`. Access tokens are short-lived, so signing out ends access promptly.
+
+An Adagio plugin for Claude Code, which packages guided pipeline skills together with this connection, will be installable from a public plugin marketplace; this page will carry the installation command when it is published. When you install it, run `/reload-plugins` if the install summary asks for it, or start a new session, before first use.
 
 ### claude.ai
 
-Add Adagio as a custom connector — no credentials or advanced settings are required:
+Adagio connects as a custom connector — no credentials or advanced settings are required. Who adds it depends on your Claude plan:
+
+**Individual plans (Free, Pro, and Max):**
 
 1. Open **Settings → Connectors → Add → Add custom connector**.
 2. Name it **Adagio** and enter the server URL `https://mcp.adagio.run/mcp`. Leave the advanced OAuth fields empty.
 3. Choose **Add**, then **Connect**, and sign in with your Adagio account when the browser asks. If you already have an active Adagio session, the connection may complete without a prompt.
+
+Free plans allow one custom connector, so the slot must be available.
+
+**Team and Enterprise plans:** custom connectors are added by an organization **Owner or Primary Owner** under the organization's connector settings, using the same name and server URL as above. Once the Owner has added it, each member connects it from their own **Settings → Connectors** and signs in with their own Adagio account — connections and permissions are always per person, never shared.
 
 One authorization covers Claude on the web, desktop, and mobile, and the connector's tools also become available in Claude Code sessions signed into the same Claude account. Each Adagio tool is individually permission-gated in Claude's own settings, with read-only and write tools grouped separately.
 
@@ -86,7 +96,7 @@ Pipelines written through the hosted integration display a provenance label such
 
 For ChatGPT and Codex, open **Profile → AI assistants** in Adagio and choose **Revoke access**. Revocation is enforced by Adagio and does not depend on uninstalling the plugin. Existing tokens issued before the revocation stop working; the next use requires authorization again.
 
-Claude connections appear in the same panel as their own entry and are revoked independently of ChatGPT/Codex: choose **Revoke access** on the **Claude** row. Signing out on the Claude side (`claude mcp logout plugin:adagio:adagio` in Claude Code, or disconnecting the connector in claude.ai settings) additionally discards the credentials stored by Claude, but profile revocation is the server-enforced lever and does not depend on it.
+Claude connections appear in the same panel as their own entry and are revoked independently of ChatGPT/Codex: choose **Revoke access** on the **Claude** row. Signing out on the Claude side (`claude mcp logout adagio` in Claude Code, or disconnecting the connector in claude.ai settings) additionally discards the credentials stored by Claude, but profile revocation is the server-enforced lever and does not depend on it.
 
 ## Troubleshooting
 
@@ -116,7 +126,7 @@ The public plugin does not start runs. Open the pipeline in Adagio Desktop and c
 
 ### Claude authentication loops or its tools disappear
 
-Sign out and back in: `claude mcp logout plugin:adagio:adagio`, then `claude mcp login plugin:adagio:adagio`, and start a new session. If Claude Code reports an incompatible authorization server, the plugin is pointing at a stale server entry — update the plugin and retry. On claude.ai, open the Adagio connector in **Settings → Connectors** and reconnect; if its tools are missing from a conversation, enable the connector for that conversation from the composer's connectors menu.
+Sign out and back in: `claude mcp logout adagio`, then `claude mcp login adagio`, and start a new session. If Claude Code reports an incompatible authorization server, the server entry predates the current Adagio gateway — remove and re-add it with the command above. On claude.ai, open the Adagio connector in **Settings → Connectors** and reconnect; if its tools are missing from a conversation, enable the connector for that conversation from the composer's connectors menu.
 
 ### A workspace blocks authorization
 
