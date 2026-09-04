@@ -60,12 +60,22 @@ Adagio blocks pipeline download until the graph has no remaining required-input,
 
 ## 7. Run from the UI
 
-Click **Run** in the toolbar. Adagio will prompt you to provide values for any required inputs and parameters that have no defaults. Once submitted, you can watch each step complete in the run view.
+Select a connected Runtime Server from the title bar, then click **Run** in the
+toolbar. Adagio will prompt you to provide values for required inputs and
+parameters that have no defaults.
 
-The run form has two parts:
+The run form has three parts:
 
-- **Run arguments** for files and promoted parameters
-- **Run configuration** for the analysis name, compute settings, and account
+- **Params** for promoted parameters
+- **Files** for paths interpreted by the selected Runtime Server
+- **Environment** for the run details, task environments, concurrency, and cache reuse
+
+Choose **Start run** after the checklist is clear. You can watch each step
+complete in the run view.
+
+Adagio Desktop is available as a Runtime Server when it is connected. To run on
+a self-hosted Linux machine, follow [Runtime Server
+setup](/running/runtime-servers/).
 
 ## 8. Export the pipeline
 
@@ -93,4 +103,5 @@ Next:
 
 - [The Pipeline Canvas](/building/canvas/)
 - [Inputs, Parameters, and Defaults](/building/inputs-parameters-and-defaults/)
+- [Runtime Servers](/running/runtime-servers/)
 - [Running with the CLI](/running/cli/)
