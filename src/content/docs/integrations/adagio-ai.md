@@ -103,7 +103,10 @@ Pipeline tool results include a canonical **Open in Adagio** HTTPS link. Plugin 
 - create pipelines and make reviewed, conflict-aware edits when assistant writes are enabled
 - add a community plugin to your library only through the existing explicit consent flow
 
-The hosted plugin does not execute pipelines, read local files, inspect local run-output folders, control the Desktop interface, or access raw biological artifacts. Adagio Desktop remains responsible for local execution.
+The hosted plugin does not execute pipelines, read local files, inspect
+run-output folders, control the Desktop interface, or access raw biological
+artifacts. Execution remains the responsibility of the Runtime Server selected
+in Adagio, either Adagio Desktop or a self-hosted Linux server.
 
 ## Review and consent
 
@@ -141,9 +144,13 @@ The pipeline changed after the assistant read it. Ask the assistant to fetch the
 
 Adagio can disable assistant creation and editing while leaving read-only tools available. A disabled write returns `assistant_writes_disabled`; retrying will not bypass it. Continue inspecting and validating pipelines, then make the proposed change in Adagio or wait until the integration administrator re-enables assistant writes.
 
-### A local run cannot start
+### A run cannot start
 
-The public plugin does not start runs. Open the pipeline in Adagio Desktop and confirm the local agent status is connected. If Desktop is offline, start it and sign in before running. Pipeline structure work can continue through the hosted plugin while Desktop is offline.
+The public plugin does not start runs. Open the pipeline in Adagio and select an
+available Runtime Server. If you use Adagio Desktop, start it and sign in. If you
+use a self-hosted server, confirm it is connected under **Settings → Runtime
+Servers**. Pipeline structure work can continue through the hosted plugin while
+no Runtime Server is available.
 
 ### Claude authentication loops or its tools disappear
 

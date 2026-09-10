@@ -1,92 +1,105 @@
 ---
 title: Running from the UI
-description: Submitting and monitoring pipeline runs in the browser
+description: Configure, start, and monitor pipeline runs in Adagio
 ---
 
-Use the UI when you want Adagio to manage uploads, compute-account selection, and run monitoring.
+Use the UI when you want to configure a run, send it to a connected Runtime
+Server, and monitor every pipeline step from Adagio.
 
-## Starting a run
+## Select a Runtime Server
 
-From the home screen, click **Run** next to a saved pipeline. You can also run directly from the canvas by clicking **Run** in the toolbar.
+Open the pipeline in the editor and use the Runtime Server indicator in the
+title bar to choose where it will run.
 
-The run flow has two steps.
+Adagio Desktop appears automatically when it is signed in and connected. A
+self-hosted Linux machine must first be enrolled under **Settings → Runtime
+Servers**. See [Runtime Servers](/running/runtime-servers/) for setup
+instructions.
 
-## Step 1: Run arguments
+The selected server must be connected before a run can start. Changing servers
+after a run has begun requires clearing that editor session's run state.
 
-The first step shows:
+## Configure the run
 
-- **Required inputs**: files or data that must be provided before the run can start
-- **Open parameters**: any parameters that were left configurable when the pipeline was built
+Click **Run** in the toolbar. The run form groups settings into three areas:
 
-Defaults on promoted parameters are prefilled. Promoted parameters with no default are required.
+- **Params** contains promoted pipeline parameters. Defaults are prefilled;
+  promoted parameters without defaults are required.
+- **Files** contains promoted pipeline inputs.
+- **Environment** contains the run name and description, task environments,
+  maximum parallel tasks, and cache reuse.
 
-## Providing inputs
+Adagio lists unresolved items above the **Start run** button. The run remains
+blocked until every required input, parameter, and task environment is valid.
 
-For each required input, upload the file the pipeline expects.
+## Provide input paths
 
-Common cases include:
+For Adagio Desktop, use the file picker to choose files on that computer.
+
+For a self-hosted Runtime Server, enter a path that exists on the server. The
+browser does not upload the file and cannot verify a path on another machine.
+The Runtime Server's Linux user must be able to read it.
+
+Common inputs include:
 
 - QIIME 2 artifacts such as `.qza`
 - metadata tables such as `.tsv` or `.csv`
+- directories required by directory-based import formats
 
-The semantic type of the input tells you what shape of data is expected.
+The input's semantic type tells you which kind of data the action expects.
 
-## Exporting an arguments JSON template
+## Choose task environments
 
-From the run arguments step you can export a JSON template for CLI use.
+Each action runs in the environment selected for that task:
 
-Important: this export records the current input file names, not absolute local paths or Adagio upload tokens. Replace those file names with real local paths before running the pipeline with `adagio run`.
+- a Docker image
+- a conda environment already installed on the Runtime Server
+- an Apptainer or Singularity `.sif` image already present on the Runtime Server
 
-## Step 2: Run configuration
+Container names and filesystem paths are interpreted by the selected Runtime
+Server. Resolve any missing environment before starting the run.
 
-The second step captures the UI-specific execution settings:
+## Start and monitor the run
 
-- analysis name
-- analysis description
-- CPU
-- RAM
-- disk
-- account
-
-These settings are for the Adagio-managed run. They are not part of the exported `.adg` pipeline file.
-
-## Submitting the run
-
-After both steps are complete, submit the run. Adagio uploads the selected files, creates the analysis record, and starts execution against the selected account.
-
-## Monitoring progress
+Choose **Start run** after the checklist is clear. Adagio creates the run and the
+selected Runtime Server claims it.
 
 The run view shows each pipeline step with a status indicator:
 
-| Status   | Meaning               |
-| -------- | --------------------- |
-| Pending  | Waiting to start      |
-| Running  | Currently executing   |
+| Status | Meaning |
+| --- | --- |
+| Pending | Waiting to start |
+| Running | Currently executing |
 | Complete | Finished successfully |
-| Failed   | Encountered an error  |
+| Failed | Encountered an error |
 
-Click any step to see its log output. If a step fails, the log will include the error message to help diagnose the problem.
+Select a step to inspect its logs. If the Runtime Server disconnects, Adagio
+preserves the last reported state while it waits for the server to reconnect.
 
 ## Results
 
-When the run completes, results are available in the run view. You can download individual artifacts from there.
+The Runtime Server reports output artifact paths to Adagio. For a self-hosted
+server, those paths refer to the server's filesystem. Access them using the
+filesystem and permissions available on that machine.
 
 ## Reruns and caching
 
-If you rerun a pipeline with the same inputs but different parameters, only the steps affected by the change re-execute. Upstream steps whose inputs have not changed are replayed from cache automatically.
+When cache reuse is enabled, eligible steps whose inputs and settings match a
+previous run can be skipped and their results reused. Connected local-plugin
+actions always execute fresh so library-code changes are picked up immediately.
 
-Connected local-plugin actions are the exception: they always execute fresh so
-library-code changes are picked up immediately. Official actions before and
-after them keep normal cache eligibility. You can also turn off **Use cache** for
-an individual non-local node.
+You can disable reuse for an individual eligible node or turn off **Reuse
+cached results** for the entire run.
 
-To force a full rerun from scratch, turn off the global **Use cache** control.
+## Export for CLI use
 
-## Downloading for CLI use
+You can export:
 
-For CLI execution, export:
+- the pipeline as an `.adg` file
+- the current parameter configuration for a CLI run
 
-- the pipeline `.adg` file from the editor
-- an arguments JSON template from the run arguments step
+Paths in the exported configuration are still paths from the machine used for
+the UI run. Replace them when the CLI will run on another host.
 
-Then use [Running with the CLI](/running/cli/) and [Runtime Configuration](/running/cli-config/) to run the same workflow locally.
+See [Running with the CLI](/running/cli/) and [Runtime
+Configuration](/running/cli-config/) for command-line execution.

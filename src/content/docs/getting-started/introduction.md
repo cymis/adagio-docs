@@ -60,8 +60,12 @@ A run is one execution of a pipeline with a specific set of input files, paramet
 
 Adagio supports two main execution modes:
 
-- **from the UI**, where Adagio manages uploads and a compute account
+- **from the UI**, where a selected Runtime Server executes the pipeline and
+  reports progress to Adagio
 - **from the CLI**, where you provide local paths, a cache directory, and optional runtime overrides
+
+A Runtime Server can be Adagio Desktop on your computer or a self-hosted Linux
+machine. See [Runtime Servers](/running/runtime-servers/).
 
 ### Runtime configuration
 
