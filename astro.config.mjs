@@ -34,6 +34,7 @@ export default defineConfig({
           label: 'Running Pipelines',
           items: [
             { label: 'From the UI', slug: 'running/from-ui' },
+            { label: 'Runtime Servers', slug: 'running/runtime-servers' },
             { label: 'With the CLI', slug: 'running/cli' },
             { label: 'Catalog Pipelines', slug: 'running/pipeline-channels' },
             { label: 'Runtime Configuration', slug: 'running/cli-config' },
