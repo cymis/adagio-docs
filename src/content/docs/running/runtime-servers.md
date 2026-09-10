@@ -8,10 +8,12 @@ the web app can execute on that machine. The server makes outbound HTTPS
 connections to Adagio, claims work, runs it with `adagio-cli`, and reports
 progress and output paths. It does not require an inbound network port.
 
-:::caution[QA preview]
-`adagio-server` is currently a QA prerelease for the Adagio development
-deployment. Install the pinned `0.1.0a1` release shown below. Do not treat this
-preview as a production service.
+:::note[Free during preview]
+Runtime Server connections are currently offered at no charge. In the future,
+submitting jobs to a Runtime Server from Adagio will be a paid feature. We will
+publish pricing and provide advance notice before billing begins. No charges
+will occur during the preview. Running pipelines directly with `adagio-cli`
+will always be free.
 :::
 
 ## Requirements
@@ -52,7 +54,7 @@ Create a persistent virtual environment on the Linux machine:
 ```bash
 python3 -m venv ~/.local/share/adagio-server-venv
 source ~/.local/share/adagio-server-venv/bin/activate
-python -m pip install "adagio-server==0.1.0a1"
+python -m pip install adagio-server
 adagio-server --version
 ```
 
@@ -144,4 +146,3 @@ Common checks:
   pipeline uses Docker images.
 - If Adagio reports **Update required**, install the compatible server release
   and enroll again.
-
