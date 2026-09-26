@@ -233,3 +233,7 @@ Runtime config affects execution only. It does not:
 | `environment` | defaults, plugins, tasks | conda environment name | named conda environment to run with `conda run -n` |
 | `prefix` | defaults, plugins, tasks | conda environment path | conda environment path to run with `conda run -p` |
 | `conda_executable` | defaults, plugins, tasks | path to `conda` | conda executable override |
+
+## Slurm execution
+
+See [Slurm execution and Run environments](/running/slurm/) for per-action scheduling, shared storage, saved profiles, resource defaults and cancellation.

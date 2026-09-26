@@ -146,3 +146,7 @@ Common checks:
   pipeline uses Docker images.
 - If Adagio reports **Update required**, install the compatible server release
   and enroll again.
+
+## Slurm execution
+
+See [Slurm execution and Run environments](/running/slurm/) for per-action scheduling, shared storage, saved profiles, resource defaults and cancellation.
