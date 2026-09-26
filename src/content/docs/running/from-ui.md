@@ -106,4 +106,4 @@ Configuration](/running/cli-config/) for command-line execution.
 
 ## Slurm execution
 
-See [Slurm execution and Run environments](/running/slurm/) for per-action scheduling, shared storage, saved profiles, resource defaults and cancellation.
+See [Slurm execution and Run environments](/running/slurm/) for per-action scheduling, shared storage, saved Run environments, resource defaults and cancellation.

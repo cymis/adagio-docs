@@ -9,22 +9,24 @@ validated. Plugins are unchanged. CPU requests allocate cores; they do not chang
 plugin parameters such as `threads` or `n_jobs`.
 
 This feature requires the coordinated Slurm release: `adagio-cli` 0.2.0,
-`adagio-server` 0.2.0 and `adapter-schemas` 0.4.0, plus the application profile
-migration. These versions are proposed by the implementation and have not yet
-been published. Until release, install the matching source checkouts together.
+`adagio-server` 0.2.0 and `adapter-schemas` 0.4.0, plus the application's Run
+environment migration. These versions have not yet been published. Until
+release, install the matching source checkouts together.
 
 ## Submit-host setup
 
 Run the CLI or Runtime Server on a cluster submit host with `sbatch`, `squeue`,
 `sacct` and `scancel` available. Accounting must provide allocation states and
-exit codes. Adagio does not submit through SSH from your laptop.
+exit codes. Adagio does not submit through SSH from your laptop. Run
+`adagio capabilities` on the submit host to see which executors the CLI can use
+there, and why one is unavailable; a Runtime Server reports the same to Adagio.
 
 Use Apptainer with an existing `.sif` image or a shared Conda prefix. The worker
 launch executable, environment, inputs, cache and shared work directory must be
 available at the same paths on compute hosts. A submit-host path check cannot
 prove compute-host visibility; every batch job checks its required paths again.
 The shared work directory supports shared scratch. Node-local scratch and
-Slurm with Docker are unsupported. Serial Docker execution remains available.
+Slurm with Docker are unsupported. Local Docker execution remains available.
 
 Compute workers need no hosted Adagio credentials. The coordinator on the submit
 host reports progress and results. Keep that coordinator running until completion.
@@ -33,7 +35,7 @@ There is no coordinator restart/resume or automatic resubmission in this release
 ## Create a Run environment
 
 Open **Settings → Run environments → New Run environment**. Enter a name,
-choose an existing Runtime Server, and select **Serial** or **Slurm**. For Slurm,
+choose an existing Runtime Server, and select **Local** or **Slurm**. For Slurm,
 enter an absolute shared work directory. Partition/queue, account, memory, time
 limit and QoS are optional; omission uses the applicable cluster default.
 Default CPUs per task is **1**. **Maximum submitted jobs** defaults to **8** and
@@ -48,28 +50,32 @@ not shell commands.
 
 Run environments belong to your account and pair execution settings with one
 Runtime Server. Select a **server - environment** entry from the server icon in
-the pipeline title bar on the edit or run page. Each server also has a Serial
+the pipeline title bar on the edit or run page. Each server also has a Local
 option. Click a configured environment in Settings to edit it, or use its Delete
-button. Task software environments remain configured per action. An old runtime
-or CLI is rejected; a requested Slurm run never silently executes locally.
+button. Task software environments remain configured per action. A Slurm run is
+accepted only by a Runtime Server whose CLI reports Slurm as available; a
+requested Slurm run never silently executes locally. The CLI checks the
+settings themselves when the run starts, so a mistake such as a relative work
+directory fails the run immediately with the CLI's explanation.
 
-Each CPU and memory field resolves independently: task override, then profile
-default, then one CPU or cluster-default memory. Memory is the total allocation
+Each CPU and memory field resolves independently: task override, then Run
+environment default, then one CPU or cluster-default memory. Memory is the total allocation
 for one whole action, never multiplied by CPU count. Positive decimal and binary
 units are accepted, for example `4 GB`, `4 GiB` or `512 MiB`; Slurm memory is
 rounded upward to a whole MiB. Existing per-node resource controls set overrides.
 
-Submission copies all settings into the run. Editing or deleting the profile
-cannot change an existing run. **Re-run / duplicate** starts with its saved
-settings; explicitly select a current profile to adopt later changes. Run
+Submission copies all settings into the run. Editing or deleting the Run
+environment cannot change an existing run. **Re-run / duplicate** starts with its
+saved settings; explicitly select a current Run environment to adopt later
+changes. Run
 **Configuration → Download saved run configuration** exports the saved JSON.
 The editor's run-config download exports TOML with the selected snapshot.
 
 ## CLI configuration
 
-JSON and TOML have equivalent semantics. A missing executor retains serial
-execution, one task at a time. Version must be the integer `1`. Unknown keys,
-executors and unsupported versions fail validation.
+JSON and TOML have equivalent semantics. A missing executor runs locally, one
+task at a time (`kind = "local"`). Version must be the integer `1`. Unknown
+keys, executors and unsupported versions fail validation.
 
 ```toml
 version = 1
@@ -117,20 +123,27 @@ submitting jobs. The inspection output is not a new public scientific plan API.
 
 ## Progress, diagnostics and cancellation
 
-Pending jobs stay queued. The CLI prints each scheduler job ID and retained run
-directory. The directory contains the resolved config, plan, attempt specs,
-batch scripts, submission registry, task logs and results. Scheduler completion
-alone is insufficient: the worker must publish a current complete result manifest
-and all declared output paths. Output paths and archived results remain available
-through the normal run UI.
+Pending jobs stay queued; a task shows as running, with its scheduler job ID,
+once Slurm starts it. Adagio polls every 2 seconds, backing off to every 30
+seconds while nothing changes. Each run works in its own `run-…` directory under
+the shared work directory: one `attempt-…` directory per task (task spec, batch
+script, log and result manifest) and the run's `submissions.json` registry.
+Scheduler completion alone is insufficient: the worker must publish a current
+complete result manifest and all declared output paths. After a successful run
+Adagio saves its outputs and removes the run directory; a failed or interrupted
+run keeps it for inspection and cleanup. Output paths, archived results and task
+logs remain available through the normal run UI.
 
 On a failure, Adagio stops submitting and cancels peers. A failed action, timeout,
 out-of-memory termination, missing output or unknown scheduler state fails the
 run. Temporary accounting delays are allowed; disappearance is never success.
-Use **Cancel run**, Ctrl-C or SIGTERM for scoped cleanup. The Runtime Server also
-uses the run's registry if the coordinator crashes or does not shut down cleanly.
-Inspect any **cleanup incomplete** message: scheduler outages can prevent
-confirmation. Never use a broad `scancel -u` to clean up an individual Adagio run.
+Use **Cancel run**, Ctrl-C or SIGTERM for scoped cleanup. If the CLI is killed
+before it can cancel its jobs, the Runtime Server runs `adagio cleanup` with the
+run's record, which cancels exactly the jobs in that run's registry. From the
+command line, pass `--run-record FILE` to `adagio runtime` and run
+`adagio cleanup FILE` after an interrupted run. Inspect any **cleanup
+incomplete** message: scheduler outages can prevent confirmation. Never use a
+broad `scancel -u` to clean up an individual Adagio run.
 
 An uncertain `sbatch` response is not retried. Reconcile the exact `adagio-…` job
 name and job IDs in `submissions.json`; retain that directory until cleanup is
