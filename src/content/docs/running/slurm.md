@@ -23,7 +23,13 @@ server home, on one host at a time: a second server on another host could
 mistake the first one's running jobs for leftovers. Accounting must provide allocation states and
 exit codes. Adagio does not submit through SSH from your laptop. Run
 `adagio capabilities` on the submit host to see which executors the CLI can use
-there, and why one is unavailable; a Runtime Server reports the same to Adagio.
+there, and why one is unavailable. A Runtime Server reports what its own
+service can find, and a service does not see what your login shell adds to
+`PATH`, such as `module load slurm` or `/etc/profile.d` scripts. If Slurm is
+available in your shell but the server reports it missing, run
+`systemctl --user edit adagio-server`, add `Environment=PATH=…` under
+`[Service]` with your shell's `PATH`, then
+`systemctl --user restart adagio-server`.
 
 Use Apptainer with an existing `.sif` image or a shared Conda prefix. The worker
 launch executable, environment, inputs, cache and shared work directory must be
@@ -128,8 +134,9 @@ submitting jobs. The inspection output is not a new public scientific plan API.
 
 ## Progress, diagnostics and cancellation
 
-Pending jobs stay queued; a task shows as running, with its scheduler job ID,
-once Slurm starts it. Adagio polls every 2 seconds, backing off to every 30
+Pending jobs stay queued; a task shows as running once Slurm starts it. Each
+job's Slurm ID is recorded in the run's `submissions.json`, and the message for
+a job that Slurm reports as failed names it. Adagio polls every 2 seconds, backing off to every 30
 seconds while nothing changes. Each run works in its own `run-…` directory under
 the shared work directory: one `attempt-…` directory per task (task spec, batch
 script, log and result manifest) and the run's `submissions.json` registry.
@@ -176,7 +183,9 @@ When Slurm refuses a submission outright, for example an invalid partition or
 account, the run fails with Slurm's own message and nothing needs cleaning up.
 An uncertain `sbatch` response, such as a timeout, is never retried: it is
 recorded as unconfirmed in `submissions.json` until cancellation or cleanup
-settles it. Cancellation and cleanup cancel any job with
+settles it. Stopping a run while `sbatch` is still answering waits for that
+answer, at most 30 seconds, so a stop never makes a submission uncertain.
+Cancellation and cleanup cancel any job with
 its exact `adagio-…` name, and settle it once no such job has appeared for a
 minute longer than the cluster's credential lifetime: Slurm still acts on a
 request that reaches it until the request's credential expires. Adagio uses an
@@ -185,9 +194,12 @@ If that value cannot be verified (including an unset or zero `ttl`), cleanup
 reports incomplete and preserves unseen submissions and their run record for
 a later attempt. It does not assume a default lifetime: authentication defaults
 can vary between clusters. Jobs that appear can still be cancelled and confirmed
-as ended. Ask the cluster administrator to verify the credential lifetime
-configuration before retrying cleanup; do not delete the retained record merely
-because the queue is empty. There are no automatic retries,
+as ended. Once you have checked with `squeue --name=adagio-…`, using the names
+in the message, that no such job exists, settle the submission with
+`adagio cleanup --settle-unconfirmed FILE`; for a Runtime Server run, `FILE`
+is `<server home>/jobs/<job id>/run-record.json`. Do not delete the record by
+hand. Alternatively, ask the cluster administrator to set an explicit
+credential lifetime, so such submissions settle by themselves. There are no automatic retries,
 arrays, Slurm dependency chains, MPI/multi-node jobs or GPU-specific controls.
 
 Cache lookup happens inside submitted workers. A cached action can still consume

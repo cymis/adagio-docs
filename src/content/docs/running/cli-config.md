@@ -150,17 +150,7 @@ Rules:
 
 For local development or shared systems where a QIIME 2 conda environment is already installed, Adagio can run tasks with `conda run`.
 
-Use `environment` for a named conda environment:
-
-```toml
-version = 1
-
-[defaults]
-kind = "conda"
-environment = "rachis-qiime2-2026.4"
-```
-
-Use `prefix` instead when the environment should be selected by filesystem path:
+Select the environment by its filesystem path with `prefix`:
 
 ```toml
 version = 1
@@ -185,7 +175,7 @@ version = 1
 
 [defaults]
 kind = "conda"
-environment = "rachis-qiime2-2026.4"
+prefix = "/opt/conda/envs/rachis-qiime2-2026.4"
 conda_executable = "/opt/conda/bin/conda"
 ```
 
@@ -202,14 +192,14 @@ dada2 = { image = "ghcr.io/cymis/qiime2-plugin-dada2:2026.1" }
 my_plugin = { kind = "apptainer", image = "/shared/images/my-plugin.sif" }
 ```
 
-You can also mix execution environments per task. This config runs `demux emp-single` in Docker and `dada2 denoise-single` in the named conda environment:
+You can also mix execution environments per task. This config runs `demux emp-single` in Docker and `dada2 denoise-single` in a conda environment:
 
 ```toml
 version = 1
 
 [tasks]
 "demux.emp_single" = { kind = "docker", image = "ghcr.io/cymis/qiime2-plugin-demux:2026.4" }
-"dada2.denoise_single" = { kind = "conda", environment = "rachis-qiime2-2026.4" }
+"dada2.denoise_single" = { kind = "conda", prefix = "/opt/conda/envs/rachis-qiime2-2026.4" }
 ```
 
 Task keys use the exported `plugin.action` names. QIIME 2 action names that are written with hyphens in prose are usually stored with underscores in the pipeline, so `emp-single` becomes `emp_single` and `denoise-single` becomes `denoise_single`.
@@ -230,7 +220,6 @@ Runtime config affects execution only. It does not:
 | `kind` | defaults, plugins, tasks | `docker`, `apptainer`, `conda` | task runner to use |
 | `image` | defaults, plugins, tasks | image ref or `.sif` path | container image to use for Docker or Apptainer |
 | `platform` | defaults, plugins, tasks | e.g. `linux/amd64` | Docker platform override |
-| `environment` | defaults, plugins, tasks | conda environment name | named conda environment to run with `conda run -n` |
 | `prefix` | defaults, plugins, tasks | conda environment path | conda environment path to run with `conda run -p` |
 | `conda_executable` | defaults, plugins, tasks | path to `conda` | conda executable override |
 
