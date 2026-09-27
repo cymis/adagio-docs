@@ -179,8 +179,15 @@ recorded as unconfirmed in `submissions.json` until cancellation or cleanup
 settles it. Cancellation and cleanup cancel any job with
 its exact `adagio-…` name, and settle it once no such job has appeared for a
 minute longer than the cluster's credential lifetime: Slurm still acts on a
-request that reaches it until the request's credential expires (the `AuthInfo`
-`ttl`, five minutes by default), so cleanup can take that long. There are no automatic retries,
+request that reaches it until the request's credential expires. Adagio uses an
+explicit positive `AuthInfo` `ttl` from `scontrol show config` for this bound.
+If that value cannot be verified (including an unset or zero `ttl`), cleanup
+reports incomplete and preserves unseen submissions and their run record for
+a later attempt. It does not assume a default lifetime: authentication defaults
+can vary between clusters. Jobs that appear can still be cancelled and confirmed
+as ended. Ask the cluster administrator to verify the credential lifetime
+configuration before retrying cleanup; do not delete the retained record merely
+because the queue is empty. There are no automatic retries,
 arrays, Slurm dependency chains, MPI/multi-node jobs or GPU-specific controls.
 
 Cache lookup happens inside submitted workers. A cached action can still consume
