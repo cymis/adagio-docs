@@ -137,6 +137,8 @@ logs remain available through the normal run UI.
 On a failure, Adagio stops submitting and cancels peers. A failed action, timeout,
 out-of-memory termination, missing output or unknown scheduler state fails the
 run. Temporary accounting delays are allowed; disappearance is never success.
+A job Slurm stops accounting for fails its action but is still cancelled, since
+it may still be running.
 Use **Cancel run**, Ctrl-C or SIGTERM for scoped cleanup. If the CLI is killed
 before it can cancel its jobs, the Runtime Server runs `adagio cleanup` with the
 run's record, which cancels exactly the jobs in that run's registry. From the
@@ -145,9 +147,12 @@ command line, pass `--run-record FILE` to `adagio runtime` and run
 incomplete** message: scheduler outages can prevent confirmation. Never use a
 broad `scancel -u` to clean up an individual Adagio run.
 
-An uncertain `sbatch` response is not retried. Reconcile the exact `adagio-…` job
-name and job IDs in `submissions.json`; retain that directory until cleanup is
-confirmed. There are no automatic retries, arrays, Slurm dependency chains,
+When Slurm refuses a submission outright, for example an invalid partition or
+account, the run fails with Slurm's own message and nothing needs cleaning up.
+An uncertain `sbatch` response, such as a timeout, is never retried: it stays
+unconfirmed in `submissions.json` and every cleanup looks for its exact
+`adagio-…` job name until one is found or you reconcile it. Retain that
+directory until cleanup is confirmed. There are no automatic retries, arrays, Slurm dependency chains,
 MPI/multi-node jobs or GPU-specific controls.
 
 Cache lookup happens inside submitted workers. A cached action can still consume
