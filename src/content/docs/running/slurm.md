@@ -16,7 +16,9 @@ release, install the matching source checkouts together.
 ## Submit-host setup
 
 Run the CLI or Runtime Server on a cluster submit host with `sbatch`, `squeue`,
-`sacct` and `scancel` available. Accounting must provide allocation states and
+`sacct` and `scancel` available. Keep a Runtime Server's server home on that
+host's local disk, not a home directory shared between login nodes, and run one
+server per server home. Accounting must provide allocation states and
 exit codes. Adagio does not submit through SSH from your laptop. Run
 `adagio capabilities` on the submit host to see which executors the CLI can use
 there, and why one is unavailable; a Runtime Server reports the same to Adagio.
@@ -155,24 +157,26 @@ Runtime Server runs `adagio cleanup` with the run's record, which cancels
 exactly the jobs in that run's registry; a restarted server does the same for
 records its previous process left. From the command line, pass
 `--run-record FILE` to `adagio runtime` and run `adagio cleanup FILE` after an
-interrupted run. Cleanup never acts while the run's own process is still alive:
+interrupted run; a run removes the record itself once none of its jobs can
+still be running. Cleanup never acts while the run's own process is still alive:
 it changes nothing and exits with status 75, so try again once that process has
 stopped. Keep the record on the submit host's local disk and run cleanup on
-that same host: the lock that tells a live run from a dead one is only seen on
-the host that took it. Adagio refuses to start a run whose record is on a
-filesystem that does not enforce locks at all, such as a Docker Desktop bind
-mount. Inspect any **cleanup incomplete** message: scheduler outages can
-prevent confirmation. Never use a broad `scancel -u` to clean up an individual
-Adagio run.
+that same host: other hosts may not see the lock that tells a live run from a
+dead one. Adagio refuses to start a run whose record is on a filesystem where
+it finds a second lock on the same file granted, but it cannot detect a lock
+that other hosts, or the other side of a virtual machine such as Docker
+Desktop's, do not see. Inspect any **cleanup incomplete** message: scheduler
+outages can prevent confirmation. Never use a broad `scancel -u` to clean up an
+individual Adagio run.
 
 When Slurm refuses a submission outright, for example an invalid partition or
 account, the run fails with Slurm's own message and nothing needs cleaning up.
 An uncertain `sbatch` response, such as a timeout, is never retried: it stays
 unconfirmed in `submissions.json`. Cancellation and cleanup cancel any job with
-its exact `adagio-…` name, and settle it once six minutes have passed since
-submission without such a job appearing: Slurm still acts on a request that
-reaches it until the request's credential expires, five minutes by default, so
-cleanup can take that long. There are no automatic retries,
+its exact `adagio-…` name, and settle it once no such job has appeared for a
+minute longer than the cluster's credential lifetime: Slurm still acts on a
+request that reaches it until the request's credential expires (the `AuthInfo`
+`ttl`, five minutes by default), so cleanup can take that long. There are no automatic retries,
 arrays, Slurm dependency chains, MPI/multi-node jobs or GPU-specific controls.
 
 Cache lookup happens inside submitted workers. A cached action can still consume
