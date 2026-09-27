@@ -141,7 +141,8 @@ A job Slurm stops accounting for fails its action but is still cancelled, since
 it may still be running.
 Use **Cancel run**, Ctrl-C or SIGTERM for scoped cleanup. If the CLI is killed
 before it can cancel its jobs, the Runtime Server runs `adagio cleanup` with the
-run's record, which cancels exactly the jobs in that run's registry. From the
+run's record, which cancels exactly the jobs in that run's registry. A Runtime
+Server that restarts does the same for records its previous process left. From the
 command line, pass `--run-record FILE` to `adagio runtime` and run
 `adagio cleanup FILE` after an interrupted run. Inspect any **cleanup
 incomplete** message: scheduler outages can prevent confirmation. Never use a
