@@ -16,9 +16,11 @@ release, install the matching source checkouts together.
 ## Submit-host setup
 
 Run the CLI or Runtime Server on a cluster submit host with `sbatch`, `squeue`,
-`sacct` and `scancel` available. Keep a Runtime Server's server home on that
-host's local disk, not a home directory shared between login nodes, and run one
-server per server home. Accounting must provide allocation states and
+`sacct` and `scancel` available. A Runtime Server's server home holds the job
+cache, which compute hosts must reach at the same path, so for Slurm it is on
+shared storage, and file locks must work there. Run one Runtime Server per
+server home, on one host at a time: a second server on another host could
+mistake the first one's running jobs for leftovers. Accounting must provide allocation states and
 exit codes. Adagio does not submit through SSH from your laptop. Run
 `adagio capabilities` on the submit host to see which executors the CLI can use
 there, and why one is unavailable; a Runtime Server reports the same to Adagio.
@@ -142,8 +144,10 @@ out-of-memory termination, missing output or unknown scheduler state fails the
 run. Temporary accounting delays are allowed; disappearance is never success.
 A job Slurm stops accounting for fails its action but is still cancelled, since
 it may still be running. While Slurm cannot be reached at all, for example
-during a controller or accounting outage, Adagio keeps waiting and fails the run
-only after 30 minutes without an answer.
+during a controller or accounting outage, Adagio keeps waiting on jobs already
+submitted and fails the run only after 30 minutes without an answer. A
+submission attempted during an outage is uncertain and stops the run; see
+below.
 
 Every job is named `adagio-…` after its task attempt, and Adagio looks jobs up
 and cancels them by that name as well as their job ID. Slurm reuses job IDs, so
@@ -160,9 +164,8 @@ records its previous process left. From the command line, pass
 interrupted run; a run removes the record itself once none of its jobs can
 still be running. Cleanup never acts while the run's own process is still alive:
 it changes nothing and exits with status 75, so try again once that process has
-stopped. Keep the record on the submit host's local disk and run cleanup on
-that same host: other hosts may not see the lock that tells a live run from a
-dead one. Adagio refuses to start a run whose record is on a filesystem where
+stopped. Run cleanup on the same host as the run: other hosts may not see the
+lock that tells a live run from a dead one. Adagio refuses to start a run whose record is on a filesystem where
 it finds a second lock on the same file granted, but it cannot detect a lock
 that other hosts, or the other side of a virtual machine such as Docker
 Desktop's, do not see. Inspect any **cleanup incomplete** message: scheduler
@@ -171,8 +174,9 @@ individual Adagio run.
 
 When Slurm refuses a submission outright, for example an invalid partition or
 account, the run fails with Slurm's own message and nothing needs cleaning up.
-An uncertain `sbatch` response, such as a timeout, is never retried: it stays
-unconfirmed in `submissions.json`. Cancellation and cleanup cancel any job with
+An uncertain `sbatch` response, such as a timeout, is never retried: it is
+recorded as unconfirmed in `submissions.json` until cancellation or cleanup
+settles it. Cancellation and cleanup cancel any job with
 its exact `adagio-…` name, and settle it once no such job has appeared for a
 minute longer than the cluster's credential lifetime: Slurm still acts on a
 request that reaches it until the request's credential expires (the `AuthInfo`

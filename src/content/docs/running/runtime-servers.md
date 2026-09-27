@@ -113,11 +113,14 @@ To use another filesystem, append
 explicit authenticated loopback port, append `--port 23456`. The listener
 remains bound to `127.0.0.1`.
 
-Run one server per server home, on one host, and keep the server home on that
-host's local disk rather than a home directory shared between login nodes. The
-server cleans up after runs it finds in its job workspaces, and tells a run
-that is still going from one that stopped by a file lock that other hosts may
-not see.
+Run one server per server home, on one host at a time. The server cleans up
+after runs it finds in its job workspaces, and tells a run that is still going
+from one that stopped by a file lock that other hosts may not see, so a second
+server on another host sharing the same server home could cancel the first
+one's jobs. The server's configuration and service unit also live in your home
+directory, so where that is shared between hosts, install the server on only
+one host per account. Before moving a server home to another host, stop the
+server on the old host and let its runs finish stopping.
 
 Adagio does not impose a job-count limit or decide whether the machine has
 capacity for another job. Each claimed job starts independently, so the server
