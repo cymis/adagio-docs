@@ -29,7 +29,8 @@ The shared work directory supports shared scratch. Node-local scratch and
 Slurm with Docker are unsupported. Local Docker execution remains available.
 
 Compute workers need no hosted Adagio credentials. The coordinator on the submit
-host reports progress and results. Keep that coordinator running until completion.
+host reports progress and results. Keep that coordinator running until completion:
+a run started by a Runtime Server stops, cancelling its jobs, if that server stops.
 There is no coordinator restart/resume or automatic resubmission in this release.
 
 ## Create a Run environment
@@ -138,23 +139,36 @@ On a failure, Adagio stops submitting and cancels peers. A failed action, timeou
 out-of-memory termination, missing output or unknown scheduler state fails the
 run. Temporary accounting delays are allowed; disappearance is never success.
 A job Slurm stops accounting for fails its action but is still cancelled, since
-it may still be running.
-Use **Cancel run**, Ctrl-C or SIGTERM for scoped cleanup. If the CLI is killed
-before it can cancel its jobs, the Runtime Server runs `adagio cleanup` with the
-run's record, which cancels exactly the jobs in that run's registry. A Runtime
-Server that restarts does the same for records its previous process left. From the
-command line, pass `--run-record FILE` to `adagio runtime` and run
-`adagio cleanup FILE` after an interrupted run. Inspect any **cleanup
-incomplete** message: scheduler outages can prevent confirmation. Never use a
-broad `scancel -u` to clean up an individual Adagio run.
+it may still be running. While Slurm cannot be reached at all, for example
+during a controller or accounting outage, Adagio keeps waiting and fails the run
+only after 30 minutes without an answer.
+
+Every job is named `adagio-…` after its task attempt, and Adagio looks jobs up
+and cancels them by that name as well as their job ID. Slurm reuses job IDs, so
+this guarantees a later job that received the same ID is never touched.
+
+Use **Cancel run**, Ctrl-C, SIGTERM or SIGHUP (such as a closed SSH session) for
+scoped cleanup. If the Runtime Server stops or crashes, the CLI run it started
+cancels its own jobs. If the CLI is killed before it can cancel them, the
+Runtime Server runs `adagio cleanup` with the run's record, which cancels
+exactly the jobs in that run's registry; a restarted server does the same for
+records its previous process left. From the command line, pass
+`--run-record FILE` to `adagio runtime` and run `adagio cleanup FILE` after an
+interrupted run. Cleanup never acts while the run's own process is still alive:
+it changes nothing and exits with status 75, so try again once that process has
+stopped. The record must be on a local filesystem that enforces file locks, not
+a network filesystem or container bind mount; Adagio refuses to start the run
+otherwise. Inspect any **cleanup incomplete** message: scheduler outages can
+prevent confirmation. Never use a broad `scancel -u` to clean up an individual
+Adagio run.
 
 When Slurm refuses a submission outright, for example an invalid partition or
 account, the run fails with Slurm's own message and nothing needs cleaning up.
 An uncertain `sbatch` response, such as a timeout, is never retried: it stays
-unconfirmed in `submissions.json` and every cleanup looks for its exact
-`adagio-…` job name until one is found or you reconcile it. Retain that
-directory until cleanup is confirmed. There are no automatic retries, arrays, Slurm dependency chains,
-MPI/multi-node jobs or GPU-specific controls.
+unconfirmed in `submissions.json`. Cancellation and cleanup cancel any job with
+its exact `adagio-…` name, and settle it once a minute has passed since
+submission without such a job appearing. There are no automatic retries,
+arrays, Slurm dependency chains, MPI/multi-node jobs or GPU-specific controls.
 
 Cache lookup happens inside submitted workers. A cached action can still consume
 a scheduler job. Scientific parameters control cache identity; an automatically
