@@ -102,6 +102,7 @@ Pipeline tool results include a canonical **Open in Adagio** HTTPS link. Plugin 
 - validate pipelines
 - create pipelines and make reviewed, conflict-aware edits when assistant writes are enabled
 - add a community plugin to your library only through the existing explicit consent flow
+- register a private plugin in your own catalog from an interface file you built, without a submission token, when assistant writes are enabled
 
 The hosted plugin does not execute pipelines, read local files, inspect
 run-output folders, control the Desktop interface, or access raw biological
@@ -112,7 +113,9 @@ in Adagio, either Adagio Desktop or a self-hosted Linux server.
 
 Read-only operations can run after authorization. Before a consequential pipeline change, ask the assistant to show the proposed stages or diff and confirm the change in the conversation. That review is assistant workflow guidance, not a separate server-side approval gate. Browser and assistant writers use the same optimistic-concurrency token, so a stale assistant edit fails instead of overwriting a newer browser change.
 
-In the first release, `add_plugin_to_library` is the only tool with a server-side review gate. Community plugins contain third-party code that runs locally, so the assistant must ask every time before starting that protected consent flow. If ChatGPT or Codex cannot show the approval interaction, nothing is installed; add that exact plugin in Adagio's Library instead. The assistant must not invent an approval URL or silently weaken consent.
+`register_plugin` creates a private plugin entry that only you can see, from the output of `adagio qapi build`. It has no separate approval form. A private entry is used in place of a public plugin of the same name in your catalog, and replacing an entry you already registered is opt-in for each call, so ask the assistant to tell you the plugin name and whether anything is replaced before it registers. The assistant cannot publish or remove plugins or create submission tokens. See [Register through an AI assistant](/contributing/submitting-a-plugin/#register-through-an-ai-assistant).
+
+`add_plugin_to_library` is the only tool with a server-side review gate. Community plugins contain third-party code that runs locally, so the assistant must ask every time before starting that protected consent flow. If ChatGPT or Codex cannot show the approval interaction, nothing is installed; add that exact plugin in Adagio's Library instead. The assistant must not invent an approval URL or silently weaken consent.
 
 Pipelines written through the hosted integration display a provenance label such as **Created with Codex** or **Last edited through Adagio AI integration**. Adagio records the operation ID, time, integration identity (ChatGPT/Codex and Claude are recorded as distinct integrations), and writer/specification version, but not the raw prompt.
 
