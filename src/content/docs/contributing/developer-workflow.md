@@ -27,9 +27,22 @@ environment, builds its QAPI metadata locally, and creates a private plugin entr
 The connected plugin remembers that Conda environment. Nodes from the plugin use
 it by default when you run from the editor.
 
-The CLI submission flow remains useful when you are not using the desktop app:
+If you are not using the desktop app, an AI assistant connected to Adagio can
+register the plugin without a submission token. Build the interface file and ask
+the assistant to register it:
 
-Create a QAPI submission token in the Adagio UI, then submit:
+```bash
+adagio qapi build --plugin my-plugin --no-submit --output qapi.json \
+  --default-conda-prefix /absolute/path/to/env
+```
+
+See [Register through an AI assistant](/contributing/submitting-a-plugin/#register-through-an-ai-assistant).
+`--default-conda-prefix` makes the entry remember the Conda environment, as
+**Connect plugin** does; leave it out to choose the environment or image when
+you run.
+
+The CLI submission flow also remains available. Create a QAPI submission token
+in the Adagio UI, then submit:
 
 ```bash
 export ACTION_URL="https://adagio.run/api/v1"
@@ -39,7 +52,7 @@ adagio qapi build --plugin my-plugin --dry-run
 adagio qapi build --plugin my-plugin
 ```
 
-This gives you a private plugin entry in Adagio so you can use the plugin in the builder.
+Either route gives you a private plugin entry in Adagio so you can use the plugin in the builder.
 
 ## 4. Build the pipeline in the Adagio UI
 
