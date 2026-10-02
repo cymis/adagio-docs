@@ -117,6 +117,14 @@ Adagio does not impose a job-count limit or decide whether the machine has
 capacity for another job. Each claimed job starts independently, so the server
 owner is responsible for resource use and concurrency.
 
+## What leaves the server
+
+Pipeline inputs and data artifacts stay on the server. It reports status, logs,
+and output paths, and it sends one kind of file: a visualization (`.qzv`), when
+the person who ran the job opens it in Adagio Desktop. The server sends only a
+visualization saved in that job's own output directory. Adagio passes the file
+to the desktop app and does not keep a copy.
+
 ## Update or reconnect
 
 Wait for active work to finish, upgrade the package in the same persistent
