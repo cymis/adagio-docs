@@ -79,6 +79,7 @@ What to expect:
 
 - You can ask for a dry run first. It checks the file and reports what would be created or replaced without writing anything.
 - An existing private entry of the same name and QIIME version is never replaced unless the assistant asks for replacement explicitly. It should ask you before doing so, because pipelines built on the old interface may stop validating.
+- The entry belongs to the QIIME version of the environment you built it in. If that is not Adagio's default version, tell the assistant which version to work in when you ask it to find the plugin's actions or build a pipeline with them; otherwise it looks in the default version and does not see them.
 - The assistant connection needs plugin write permission, which you approve when you connect it. Registration is unavailable while assistant writes are disabled.
 - The whole file is sent in one request. A plugin with a very large interface can exceed the size limit; use the command line or Adagio Desktop for it.
 - The assistant cannot publish the plugin, remove it, or create submission tokens.
