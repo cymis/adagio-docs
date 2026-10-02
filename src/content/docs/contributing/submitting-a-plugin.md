@@ -8,15 +8,19 @@ There are two separate steps in the Adagio plugin workflow:
 1. **register it with an Adagio environment** so Adagio can see the plugin actions
 2. **request public visibility** if you want other users to see it as a community or official plugin
 
-Registering through the CLI creates a **private** plugin entry by default.
+Registering always creates a **private** plugin entry. There are three ways to register:
+
+- **Adagio Desktop**: choose **Connect plugin** in Plugin management. See the [Developer Workflow](/contributing/developer-workflow/).
+- **An AI assistant** connected to Adagio: it registers the plugin through your assistant connection, with no submission token.
+- **The command line**: `adagio qapi build` submits with a scoped QAPI submission token.
 
 ## Before you submit
 
-Prepare three things:
+Prepare:
 
 1. a QIIME 2 environment with your plugin installed
 2. a container image that can run the plugin
-3. a scoped QAPI submission token from Adagio
+3. for command-line submission only, a scoped QAPI submission token from Adagio
 
 ### 1. Install the plugin in the QIIME 2 environment you will inspect
 
@@ -39,9 +43,9 @@ ghcr.io/cymis/qiime2-plugin-<plugin-name>:<tag>
 
 If you are not publishing into that default image set, users can still run the plugin with a runtime config that points to your own Docker or Apptainer image. See [Runtime Configuration](/running/cli-config/).
 
-### 3. Create a QAPI submission token in Adagio
+### 3. Create a QAPI submission token in Adagio (command line only)
 
-In the Adagio app:
+Skip this step if you register through an AI assistant or Adagio Desktop. In the Adagio app:
 
 1. sign in
 2. open **Profile**
@@ -54,6 +58,32 @@ Token notes:
 - they can be created for 1 to 168 hours
 - they are meant for CLI submission only
 - you can revoke them later from the same Profile page
+
+## Register through an AI assistant
+
+An assistant connected through the [Adagio AI integration](/integrations/adagio-ai/) can register the plugin for you. The entry is created under your own account by your assistant connection, so you do not create or paste a submission token.
+
+1. In the environment where the plugin is installed, write the plugin's interface to a file. `--no-submit` keeps the CLI from contacting Adagio, so no Action URL or token is needed:
+
+   ```bash
+   adagio qapi build --plugin my-plugin --no-submit --output qapi.json
+   ```
+
+   To have the entry remember where the plugin runs, add `--default-conda-prefix /absolute/path/to/env` or `--default-docker-image <image>`.
+
+2. Ask the assistant to register the plugin from `qapi.json`. It passes the file's contents to Adagio's `register_plugin` tool unchanged.
+
+An assistant that can run commands on your machine, such as Claude Code or Codex, can do step 1 itself. One that cannot needs you to provide the file.
+
+What to expect:
+
+- You can ask for a dry run first. It checks the file and reports what would be created or replaced without writing anything.
+- An existing private entry of the same name and QIIME version is never replaced unless the assistant asks for replacement explicitly. It should ask you before doing so, because pipelines built on the old interface may stop validating.
+- The assistant connection needs plugin write permission, which you approve when you connect it. Registration is unavailable while assistant writes are disabled.
+- The whole file is sent in one request. A plugin with a very large interface can exceed the size limit; use the command line or Adagio Desktop for it.
+- The assistant cannot publish the plugin, remove it, or create submission tokens.
+
+The file describes the plugin's interface only. It must come from `adagio qapi build`; an interface written by hand, or by an assistant from memory, produces pipelines that cannot run.
 
 ## Submit from the command line
 
@@ -88,7 +118,7 @@ Use `--force-overwrite` only when you mean to replace your own existing private 
 
 ## What the submission creates
 
-CLI submission creates a **private** plugin record for:
+Registration, by any of the three routes, creates a **private** plugin record for:
 
 - the submitted QIIME version
 - the authenticated owner
@@ -102,7 +132,7 @@ If a plugin name exists both publicly and privately, the submitting user's priva
 
 Adagio recognizes three plugin states:
 
-- **private**: submitted by a user through the CLI; visible only to that owner
+- **private**: registered by a user through Adagio Desktop, an AI assistant, or the CLI; visible only to that owner
 - **community**: public, but not maintainer-endorsed as a core supported plugin
 - **official**: public and maintainer-endorsed
 
