@@ -82,6 +82,12 @@ The Runtime Server reports output artifact paths to Adagio. For a self-hosted
 server, those paths refer to the server's filesystem. Access them using the
 filesystem and permissions available on that machine.
 
+Visualizations are the exception. Select a visualization output and choose
+**View in app** in Adagio Desktop to open it, whichever Runtime Server ran the
+step. For a self-hosted server, Adagio fetches the file from the server when you
+open it; the server must be connected, and the file must still be where the run
+saved it.
+
 ## Reruns and caching
 
 When cache reuse is enabled, eligible steps whose inputs and settings match a
