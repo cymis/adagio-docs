@@ -42,14 +42,14 @@ You need an existing Adagio account. If you do not have one, [request access](ht
 
 **Individual plans (Free, Pro, and Max):**
 
-1. Open **Settings → Connectors → Add → Add custom connector**.
+1. Open **Customize → Connectors → Add connector → Add custom connector**.
 2. Name it **Adagio** and enter the server URL `https://mcp.adagio.run`.
 3. If Claude asks for authentication settings, choose **Sign in now** and **Register automatically** for the OAuth client. Leave manually supplied client credentials and request headers empty.
 4. Choose **Add**, then **Connect**, and sign in with your Adagio account, including its second factor when prompted. If you already have an active Adagio session, the connection may complete without a prompt.
 
 Free plans allow one custom connector, so the slot must be available.
 
-**Team and Enterprise plans:** custom connectors are added by an organization **Owner or Primary Owner** under the organization's connector settings, using the same name and server URL as above. Once the Owner has added it, each member connects it from their own **Settings → Connectors** and signs in with their own Adagio account — connections and permissions are always per person, never shared.
+**Team and Enterprise plans:** custom connectors are added by an organization **Owner or Primary Owner** under the organization's connector settings, using the same name and server URL as above. Once the Owner has added it, each member connects it from their own **Customize → Connectors** and signs in with their own Adagio account — connections and permissions are always per person, never shared.
 
 One authorization covers Claude on the web, desktop, and mobile, and the connector's tools also become available in Claude Code sessions signed into the same Claude account. Each Adagio tool is individually permission-gated in Claude's own settings, with read-only and write tools grouped separately.
 
@@ -122,9 +122,9 @@ Pipelines written through the hosted integration display a provenance label such
 
 ## Revoke access
 
-For ChatGPT and Codex, open **Profile → AI assistants** in Adagio and choose **Revoke access**. Revocation is enforced by Adagio and does not depend on uninstalling the plugin. Existing tokens issued before the revocation stop working; the next use requires authorization again.
+For ChatGPT and Codex, open **Settings → AI → AI assistants** in Adagio and choose **Revoke access**. Revocation is enforced by Adagio and does not depend on uninstalling the plugin. Existing tokens issued before the revocation stop working; the next use requires authorization again.
 
-Claude connections appear in the same panel as their own entry and are revoked independently of ChatGPT/Codex: choose **Revoke access** on the **Claude** row. Signing out on the Claude side (`claude mcp logout adagio` in Claude Code, or disconnecting the connector in claude.ai settings) additionally discards the credentials stored by Claude, but profile revocation is the server-enforced lever and does not depend on it.
+Claude connections appear in the same panel as their own entry and are revoked independently of ChatGPT/Codex: choose **Revoke access** on the **Claude** row. Signing out on the Claude side (`claude mcp logout adagio` in Claude Code, or disconnecting the connector under **Customize → Connectors → Yours** on claude.ai) additionally discards the credentials stored by Claude, but Adagio enforces revocation independently of that step.
 
 ## Troubleshooting
 
@@ -134,7 +134,7 @@ Before an official listing or the tagged GitHub release is published, this is ex
 
 ### Authorization loops or has expired
 
-Revoke the existing connection under **Profile → AI assistants**, then connect again. Check that browser privacy controls allow the Adagio and Cognito authorization pages to complete their redirect. A wrong-client, wrong-audience, expired, malformed, or insufficient-scope token is rejected rather than accepted as a partial session.
+Revoke the existing connection under **Settings → AI → AI assistants**, then connect again. Check that browser privacy controls allow the Adagio and Cognito authorization pages to complete their redirect. A wrong-client, wrong-audience, expired, malformed, or insufficient-scope token is rejected rather than accepted as a partial session.
 
 ### The assistant cannot find a pipeline
 
@@ -160,7 +160,7 @@ no Runtime Server is available.
 
 For a new connection, use `https://mcp.adagio.run`, which is both the MCP endpoint and its OAuth resource. Existing `/mcp` connections remain supported. If advanced client settings are shown, select **Register automatically** and clear manually entered OAuth credentials unless your organization intentionally supplies its own client.
 
-Sign out and back in: `claude mcp logout adagio`, then `claude mcp login adagio`, and start a new session. If Claude Code reports an incompatible authorization server, the server entry predates the current Adagio gateway — remove and re-add it with the command above. On claude.ai, open the Adagio connector in **Settings → Connectors** and reconnect; if its tools are missing from a conversation, enable the connector for that conversation from the composer's connectors menu.
+Sign out and back in: `claude mcp logout adagio`, then `claude mcp login adagio`, and start a new session. If Claude Code reports an incompatible authorization server, the server entry predates the current Adagio gateway — remove and re-add it with the command above. On claude.ai, open the Adagio connector in **Customize → Connectors → Yours** and reconnect; if its tools are missing from a conversation, enable the connector for that conversation from the composer's connectors menu.
 
 ### A workspace blocks authorization
 
