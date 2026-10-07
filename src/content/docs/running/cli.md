@@ -124,6 +124,52 @@ You can export a template from the UI or write one yourself:
 
 If `outputs` is omitted, Adagio writes to `./adagio-outputs`.
 
+### Using an artifact URL
+
+QIIME artifact inputs accept HTTPS URLs as well as local file paths. Pass the
+URL through the input's usual flag:
+
+```bash
+adagio run pipeline.adg --config runtime.toml --cache-dir ./cache \
+  --input-seqs 'https://example.org/data/seqs.qza' --log-dir ./logs
+```
+
+Or use a URL in your arguments file:
+
+```json
+{
+  "version": 1,
+  "inputs": {
+    "seqs": "https://example.org/data/seqs.qza"
+  }
+}
+```
+
+Replace `seqs` with your pipeline's input name. The same URL can be entered in
+the app's input field. The consuming task downloads and validates the artifact
+inside its execution environment, so that environment must have network access.
+The orchestration process does not download inputs, and no `wget` installation
+is required. Loading the original archive preserves its UUID and QIIME provenance.
+
+Consumers share one download within a run. Each new run downloads again before
+checking for reusable action results. To require specific content, append
+`#sha256=<64 hexadecimal digits>` to the URL; a mismatch fails the input. This
+also works in an arguments file. Quote URLs when passing them through a shell.
+
+With `--log-dir`, task logs include transfer progress and `*_inputs.json` files
+record the source, final URL, byte count, SHA-256, artifact type, and UUID.
+Connected runs also record this information in task events. Query strings are
+omitted from download logs and receipts; the original URL remains in your run
+arguments.
+
+This first version supports HTTPS links to individual artifacts, including
+artifact URLs in collections or as metadata when the artifact supports that
+view. Metadata inputs also accept HTTPS links to TSV files and are loaded
+directly as QIIME metadata. The URL does not need a `.qza` or `.tsv` suffix.
+Raw data imports, remote manifests, `.qzv` files, and login flows are not supported. Downloads are
+retried from the beginning after transient failures; transfer resumption and
+separately scheduled download tasks are not yet implemented.
+
 ## CLI flags override the arguments file
 
 Values from `--arguments` are loaded first. Any explicit CLI flag overrides the file value.
