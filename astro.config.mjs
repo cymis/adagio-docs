@@ -35,6 +35,7 @@ export default defineConfig({
           items: [
             { label: 'From the UI', slug: 'running/from-ui' },
             { label: 'Runtime Servers', slug: 'running/runtime-servers' },
+            { label: 'Slurm execution and Run environments', slug: 'running/slurm' },
             { label: 'With the CLI', slug: 'running/cli' },
             { label: 'Catalog Pipelines', slug: 'running/pipeline-channels' },
             { label: 'Runtime Configuration', slug: 'running/cli-config' },
