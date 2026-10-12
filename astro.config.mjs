@@ -3,7 +3,7 @@ import starlight from '@astrojs/starlight';
 
 export default defineConfig({
   base: process.env.BASE_PATH ?? '/',
-  site: process.env.SITE_URL ?? 'https://docs.adagiodata.com',
+  site: process.env.SITE_URL ?? 'https://docs.adagio.run',
   integrations: [
     starlight({
       title: 'Adagio',

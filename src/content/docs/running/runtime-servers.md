@@ -47,6 +47,15 @@ only trusted pipelines and plugins.
 An enrollment token authorizes one machine once and expires after a short time.
 Generating another token immediately invalidates the previous one.
 
+Each account can add up to five Runtime Servers, and up to three of them can be
+connected at once. A server counts as connected from the time a machine enrolls
+until you delete the server, whether or not the machine is currently online.
+The Adagio Desktop app counts toward neither limit, and a server that someone
+else shared with you counts only toward its owner's limits. To add or connect
+another server at a limit, delete one you no longer use. Enrolling a machine
+again on a server that is already connected replaces that machine and does not
+use another slot.
+
 ## Install the server
 
 Create a persistent virtual environment on the Linux machine:
