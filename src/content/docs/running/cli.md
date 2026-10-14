@@ -50,7 +50,7 @@ Before running, inspect the pipeline interface:
 adagio pipeline show path/to/pipeline.adg
 ```
 
-This prints the task order, resolved input bindings, promoted parameters, and outputs.
+This prints the task order, resolved input bindings, pipeline parameters, and outputs.
 
 To see the dynamic CLI flags for that pipeline:
 

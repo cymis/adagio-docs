@@ -26,7 +26,7 @@ Adagio uses that information to:
 - build the node catalog in the UI
 - validate connections
 - render parameter controls
-- generate CLI flags for promoted parameters
+- generate CLI flags for pipeline parameters that read variables
 - resolve runtime environments for execution
 
 ## Adagio-specific execution requirements
