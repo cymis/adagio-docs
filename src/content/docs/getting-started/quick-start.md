@@ -54,7 +54,7 @@ A variable is also the way to give several parameters, or several inputs, one sh
 
 ## 6. Save and verify
 
-Use the **To-do** tab to clear validation issues.
+Use the **To Do** tab to clear validation issues.
 
 Adagio blocks pipeline download until the graph has no remaining required-input, required-parameter, or naming problems.
 

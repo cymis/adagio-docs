@@ -9,10 +9,21 @@ The pipeline canvas is where you build the graph that will later be saved as a p
 
 The editor has three working areas:
 
-- **Action tray (left)**: browse actions, search plugins, and filter by plugin visibility
+- **Sidebar (left)**: a rail of tabs that switch the sidebar's contents. Collapse the sidebar to give the canvas more room.
 - **Canvas (center)**: place actions, arrange the graph, and draw connections
-- **Variables tab (left)**: create the variables that nodes read and that a runner can set at run time
-- **Inspector (right)**: edit the selected node or port
+- **Inspector (right)**: appears when a node or port is selected. Its **Parameters** tab edits the selection; other tabs, such as **Run Settings**, hold run options for it.
+
+The sidebar tabs are:
+
+| Tab | Use it to |
+|-----|-----------|
+| **Actions** | browse and search plugin and built-in actions to add to the canvas (the action tray) |
+| **Run** | run the pipeline on the selected Runtime Server and follow its progress |
+| **Variables** | create the variables that nodes read and that a runner can set at run time |
+| **To Do** | see the problems that block download and runs |
+| **Pipeline** | edit the pipeline description and see its inputs, outputs, and actions at a glance |
+
+**Actions** and **Run** appear only on pipelines you own.
 
 ## Navigating the canvas
 
@@ -61,7 +72,7 @@ What you see on the right depends on the current selection:
 
 ## Validation and download
 
-The **To-do** tab tracks problems such as:
+The **To Do** tab tracks problems such as:
 
 - missing required arguments
 - duplicate input, parameter, or output names
