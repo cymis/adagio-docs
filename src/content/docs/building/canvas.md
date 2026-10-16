@@ -9,9 +9,21 @@ The pipeline canvas is where you build the graph that will later be saved as a p
 
 The editor has three working areas:
 
-- **Action tray (left)**: browse actions, search plugins, and filter by plugin visibility
+- **Sidebar (left)**: a rail of tabs that switch the sidebar's contents. Collapse the sidebar to give the canvas more room.
 - **Canvas (center)**: place actions, arrange the graph, and draw connections
-- **Inspector (right)**: edit the selected node or port, or manage the pipeline summary when nothing specific is selected
+- **Inspector (right)**: appears when a node or port is selected. Its **Parameters** tab edits the selection; other tabs, such as **Run Settings**, hold run options for it.
+
+The sidebar tabs are:
+
+| Tab | Use it to |
+|-----|-----------|
+| **Actions** | browse and search plugin and built-in actions to add to the canvas (the action tray) |
+| **Run** | run the pipeline on the selected Runtime Server and follow its progress |
+| **Variables** | create the variables that nodes read and that a runner can set at run time |
+| **To Do** | see the problems that block download and runs |
+| **Pipeline** | edit the pipeline description and see its inputs, outputs, and actions at a glance |
+
+**Actions** and **Run** appear only on pipelines you own.
 
 ## Navigating the canvas
 
@@ -43,9 +55,7 @@ Two built-ins are especially important:
 
 ## Pipeline inputs and outputs
 
-Pipeline inputs are not created automatically at the start.
-
-Instead, you usually create them by selecting an unconnected action input and using **Promote Input**. That creates a root input node and adds a named input to the pipeline signature.
+An action input that is not connected to another node is a pipeline input. Select its port to name it and type a file path or URL into its **Path** field. To share one path across several inputs, or to set it at run time, use a **Path or URL** variable. See [Inputs, Parameters, and Defaults](/building/inputs-parameters-and-defaults/).
 
 Pipeline outputs come from the graph outputs that remain exposed when you save the pipeline. Name them carefully, because those names become:
 
@@ -58,15 +68,13 @@ Pipeline outputs come from the graph outputs that remain exposed when you save t
 What you see on the right depends on the current selection:
 
 - **node selected**: edit parameters and view action help
-- **port selected**: inspect the port type, rename a promoted input or output, or promote an unconnected input
-- **pipeline summary selected**: rename promoted parameters, group them, and assign pipeline-level defaults
+- **port selected**: inspect the port type, rename a pipeline input or output, and set or choose a variable for an unconnected input's path
 
 ## Validation and download
 
-The **To-do** tab tracks problems such as:
+The **To Do** tab tracks problems such as:
 
 - missing required arguments
-- empty promoted parameters
 - duplicate input, parameter, or output names
 - an empty graph
 

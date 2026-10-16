@@ -23,9 +23,9 @@ after a run has begun requires clearing that editor session's run state.
 
 Click **Run** in the toolbar. The run form groups settings into three areas:
 
-- **Params** contains promoted pipeline parameters. Defaults are prefilled;
-  promoted parameters without defaults are required.
-- **Files** contains promoted pipeline inputs.
+- **Parameters** contains the pipeline's parameter variables. A variable's value
+  is prefilled as the default; variables without a value are required.
+- **Files** contains the pipeline inputs.
 - **Environment** contains the run name and description, task environments,
   maximum parallel tasks, and cache reuse.
 

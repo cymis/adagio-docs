@@ -11,7 +11,7 @@ You build pipelines visually in the Adagio app, export them as `.adg` files, and
 
 - **Pipeline design** in the browser
 - **Type-aware connections** between plugin actions
-- **Run-time inputs and parameters** through promoted pipeline fields
+- **Run-time inputs and parameters** through pipeline variables
 - **Portable execution** through the `adagio` CLI
 - **Reusable task results** through a shared QIIME cache
 - **Catalogs** for plugins and shareable pipelines
@@ -40,17 +40,17 @@ Adagio allows a connection only when the upstream output type is compatible with
 A pipeline is more than a graph of nodes. It also has a public interface:
 
 - **inputs** that the runner must supply
-- **parameters** that stay configurable at run time
+- **parameters** that a runner can change at run time
 - **outputs** that are saved from the graph
 
-In Adagio, that interface is created by promoting inputs and parameters while building. See [Inputs, Parameters, and Defaults](/building/inputs-parameters-and-defaults/).
+Unconnected action inputs become pipeline inputs. Parameters become part of the interface only when they read a variable; every other parameter is fixed as configured on its node. See [Inputs, Parameters, and Defaults](/building/inputs-parameters-and-defaults/).
 
 ### Defaults
 
 There are two kinds of defaults that matter:
 
 - an **action default** defined by the plugin itself
-- a **pipeline default** defined when you promote a parameter and assign a default value
+- a **variable value**, which is the run-time default for every parameter that reads the variable
 
 If a parameter is fixed on a node, it is baked into the pipeline and does not appear as a run-time setting.
 
