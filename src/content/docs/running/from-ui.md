@@ -109,3 +109,7 @@ the UI run. Replace them when the CLI will run on another host.
 
 See [Running with the CLI](/running/cli/) and [Runtime
 Configuration](/running/cli-config/) for command-line execution.
+
+## Slurm execution
+
+See [Slurm execution and Run environments](/running/slurm/) for per-action scheduling, shared storage, saved Run environments, resource defaults and cancellation.
