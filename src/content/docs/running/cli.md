@@ -174,23 +174,15 @@ separately scheduled download tasks are not yet implemented.
 
 A `.adg` file carries the values its author set in the editor: input paths or URLs, variable values, and output destinations. They are stored in the file's `configs` list, in the same shape as an arguments file, and never in the pipeline specification itself.
 
-`adagio run` applies the bundled configuration first, so a shared pipeline runs with its author's values until you change them. To see what a file bundles, print it as an arguments file:
+`adagio run` applies the bundled configuration first, so a shared pipeline runs with its author's values until you change them. To see those values, ask for help on the pipeline:
 
 ```bash
-adagio pipeline config path/to/pipeline.adg
+adagio run --pipeline path/to/pipeline.adg --show-params all --help
 ```
 
-Save that output, edit it, and pass it with `--arguments` to override some values. To ignore the bundled configuration entirely and supply every value yourself:
+Parameters with a bundled value show it as `[default: …]`, and inputs with a bundled path are not listed as required.
 
-```bash
-adagio run \
-  --pipeline path/to/pipeline.adg \
-  --no-bundled-config \
-  --arguments path/to/arguments.json \
-  --cache-dir /path/to/cache
-```
-
-A bundled path from another machine simply fails to open at run time; override it the same way.
+To change values, pass flags or an arguments file. The arguments file you download from the app has the same values the `.adg` bundles, so it is a convenient starting point to edit. A bundled path from another machine simply fails to open at run time; override it the same way.
 
 ## Flags override the arguments file, which overrides the bundled configuration
 
