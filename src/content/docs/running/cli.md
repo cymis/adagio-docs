@@ -170,9 +170,11 @@ Raw data imports, remote manifests, `.qzv` files, and login flows are not suppor
 retried from the beginning after transient failures; transfer resumption and
 separately scheduled download tasks are not yet implemented.
 
-## Variable values saved with a pipeline
+## Variable values and environments saved with a pipeline
 
 A `.adg` file carries the values its author set in the editor: variable values, input paths or URLs, and output destinations. They are stored in the file's `configs` list, in the same shape as an arguments file, and never in the pipeline specification itself.
+
+The same entry also saves the environment each plugin and step runs in, and the CPUs and memory each step requests, under `execution`. These are what the app would use when you download the file: a step's own environment where one was chosen, otherwise the plugin's environment from your plugin library. `execution` has the same shape as a [runtime config file](/running/cli-config/), so a downloaded pipeline runs without one.
 
 `adagio run` starts from those values, so a shared pipeline runs with its author's values until you change them. To see them, ask for help on the pipeline:
 
@@ -201,6 +203,8 @@ adagio run \
   --cache-dir /path/to/cache \
   --param-trunc-len 150
 ```
+
+Environments follow the same idea: a `--config` file overrides the environments saved in the `.adg`. See [Runtime configuration](#runtime-configuration).
 
 ## Providing inputs as flags
 
@@ -240,7 +244,17 @@ Per-output flags override `--output-dir`.
 
 ## Runtime configuration
 
-By default, Adagio resolves each plugin action to a published Docker image using the plugin name.
+A `.adg` downloaded from the app runs each plugin in the environment saved with it. The run header lists every plugin's environment and where it came from, `pipeline file` or `--config`:
+
+```text
+Environments:
+  dada2: docker ghcr.io/cymis/qiime2-plugin-dada2:2026.1 (pipeline file)
+  feature_table: conda /opt/envs/feature-table (--config)
+```
+
+A saved conda environment is a path on its author's machine. On another machine, point that plugin at your own environment with `--config`.
+
+A `--config` file overrides the saved environments: anything it sets wins over the pipeline file, even where the author chose an environment for a single step. A pipeline file from an older release saves no environments, so it needs a `--config` file that names one for every plugin.
 
 Use `--config` when you need to:
 
