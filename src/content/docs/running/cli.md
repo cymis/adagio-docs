@@ -170,25 +170,25 @@ Raw data imports, remote manifests, `.qzv` files, and login flows are not suppor
 retried from the beginning after transient failures; transfer resumption and
 separately scheduled download tasks are not yet implemented.
 
-## The configuration bundled in a pipeline file
+## Variable values saved with a pipeline
 
-A `.adg` file carries the values its author set in the editor: input paths or URLs, variable values, and output destinations. They are stored in the file's `configs` list, in the same shape as an arguments file, and never in the pipeline specification itself.
+A `.adg` file carries the values its author set in the editor: variable values, input paths or URLs, and output destinations. They are stored in the file's `configs` list, in the same shape as an arguments file, and never in the pipeline specification itself.
 
-`adagio run` applies the bundled configuration first, so a shared pipeline runs with its author's values until you change them. To see those values, ask for help on the pipeline:
+`adagio run` starts from those values, so a shared pipeline runs with its author's values until you change them. To see them, ask for help on the pipeline:
 
 ```bash
 adagio run --pipeline path/to/pipeline.adg --show-params all --help
 ```
 
-Parameters with a bundled value show it as `[default: …]`, and inputs with a bundled path are not listed as required.
+A parameter whose variable has a value shows that value as its `[default: …]`, and an input that already has a path is not listed as required.
 
-To change values, pass flags or an arguments file. The arguments file you download from the app has the same values the `.adg` bundles, so it is a convenient starting point to edit. A bundled path from another machine simply fails to open at run time; override it the same way.
+To change values, pass flags or an arguments file. The arguments file you download from the app holds the same values as the `.adg`, so it is a convenient starting point to edit. A saved path from another machine simply fails to open at run time; override it the same way.
 
-## Flags override the arguments file, which overrides the bundled configuration
+## Flags override the arguments file, which overrides the saved values
 
 Values are resolved in layers, lowest first:
 
-1. the configuration bundled in the `.adg` file
+1. the values saved in the `.adg` file
 2. the `--arguments` file
 3. explicit CLI flags
 
@@ -212,7 +212,7 @@ adagio run --pipeline path/to/pipeline.adg --help
 
 This is especially useful with:
 
-- `--show-params missing` to see only values still unfilled after the bundled configuration and any arguments file
+- `--show-params missing` to see only values still unfilled after the saved values and any arguments file
 - `--show-params all` to expose all outputs as `--output-*` flags
 
 ## Output control
