@@ -78,6 +78,9 @@ preserves the last reported state while it waits for the server to reconnect.
 
 ## Results
 
+Outputs with an [output path](/building/inputs-parameters-and-defaults/#output-paths)
+are also copied there when the run succeeds.
+
 The Runtime Server reports output artifact paths to Adagio. For a self-hosted
 server, those paths refer to the server's filesystem. Access them using the
 filesystem and permissions available on that machine.

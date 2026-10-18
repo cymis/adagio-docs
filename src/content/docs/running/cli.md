@@ -240,7 +240,7 @@ adagio run \
   --output-table /results/table.qza
 ```
 
-Per-output flags override `--output-dir`.
+Per-output flags override `--output-dir`. A per-output path ending in `/` is a directory, and the output is written into it under its own name: `--output-table /results/run-001/` writes `/results/run-001/table.qza`. Without the trailing `/` the path is the file itself. Only the trailing `/` decides, not whether the directory exists. The same rule applies to output paths in an arguments file and in a pipeline file's configuration.
 
 ## Runtime configuration
 
