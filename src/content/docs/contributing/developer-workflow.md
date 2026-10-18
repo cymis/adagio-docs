@@ -60,7 +60,7 @@ Now you can:
 
 - add your plugin actions to the canvas
 - connect them
-- promote the inputs and parameters you want exposed at run time
+- use variables for the parameters and inputs you want exposed at run time
 
 ## 5. Iterate on implementation code
 

@@ -23,9 +23,9 @@ after a run has begun requires clearing that editor session's run state.
 
 Click **Run** in the toolbar. The run form groups settings into three areas:
 
-- **Params** contains promoted pipeline parameters. Defaults are prefilled;
-  promoted parameters without defaults are required.
-- **Files** contains promoted pipeline inputs.
+- **Parameters** contains the pipeline's parameter variables. A variable's value
+  is prefilled as the default; variables without a value are required.
+- **Files** contains the pipeline inputs.
 - **Environment** contains the run name and description, task environments,
   maximum parallel tasks, and cache reuse.
 
@@ -77,6 +77,9 @@ Select a step to inspect its logs. If the Runtime Server disconnects, Adagio
 preserves the last reported state while it waits for the server to reconnect.
 
 ## Results
+
+Outputs with an [output path](/building/inputs-parameters-and-defaults/#output-paths)
+are also copied there when the run succeeds.
 
 The Runtime Server reports output artifact paths to Adagio. For a self-hosted
 server, those paths refer to the server's filesystem. Access them using the

@@ -34,9 +34,10 @@ To get the `.adg` file for use with the CLI, download it from the editor.
 
 Adagio blocks pipeline download until validation issues are cleared. In practice, that means:
 
-- every required input must be satisfied or promoted
-- every required parameter must be fixed or promoted
-- promoted input, parameter, and output names must be unique
+- every required parameter must have a value on the node or use a variable
+- pipeline input, variable, and output names must be unique
+
+A variable without a value does not block download. It becomes a required setting when the pipeline runs.
 
 See [Running with the CLI](/running/cli/) for next steps after download.
 
@@ -44,7 +45,7 @@ See [Running with the CLI](/running/cli/) for next steps after download.
 
 The run form can also export an arguments JSON file. This is useful as a starting point for CLI runs, but it is a template, not a fully portable execution record:
 
-- promoted parameter values are exported directly
+- values for parameter variables are exported directly
 - input files are exported by current file name, not by an absolute local path
 
 Before using that file with `adagio run`, replace the input values with real local paths.

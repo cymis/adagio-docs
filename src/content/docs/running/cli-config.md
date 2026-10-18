@@ -3,13 +3,9 @@ title: Runtime Configuration
 description: Customizing task environments for Docker, Apptainer, and conda execution
 ---
 
-By default, the CLI resolves each plugin action to a Docker image derived from the plugin name:
+A `.adg` downloaded from the app saves the environment each plugin and step runs in, under `execution` in its first config. That object has the same shape as a runtime config file, and the CLI uses it when you pass no `--config`. See [Variable values and environments saved with a pipeline](/running/cli/#variable-values-and-environments-saved-with-a-pipeline).
 
-```text
-ghcr.io/cymis/qiime2-plugin-<plugin-name>:2026.1
-```
-
-A runtime config file lets you override that resolution without editing the pipeline itself.
+A runtime config file lets you override those environments without editing the pipeline itself.
 
 Use a runtime config when you need to:
 
@@ -46,12 +42,13 @@ demux = { image = "ghcr.io/cymis/qiime2-plugin-demux:2026.1" }
 "dada2.denoise_single" = { image = "registry.internal/custom-dada2:1.0" }
 ```
 
-Settings are resolved in this order, from highest to lowest priority:
+Within one file, settings are resolved in this order, from highest to lowest priority:
 
 1. `[tasks]` - overrides for a specific task
 2. `[plugins]` - overrides for all tasks from a plugin
 3. `[defaults]` - fallback for anything not explicitly set
-4. built-in defaults
+
+The `--config` file as a whole sits above the environments saved in the `.adg`: whatever it sets wins, even over a step the pipeline file configured individually. Anything it leaves unset keeps the saved environment.
 
 ## Choosing keys
 

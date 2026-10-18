@@ -50,7 +50,7 @@ Before running, inspect the pipeline interface:
 adagio pipeline show path/to/pipeline.adg
 ```
 
-This prints the task order, resolved input bindings, promoted parameters, and outputs.
+This prints the task order, resolved input bindings, pipeline parameters, and outputs.
 
 To see the dynamic CLI flags for that pipeline:
 
@@ -170,9 +170,29 @@ Raw data imports, remote manifests, `.qzv` files, and login flows are not suppor
 retried from the beginning after transient failures; transfer resumption and
 separately scheduled download tasks are not yet implemented.
 
-## CLI flags override the arguments file
+## Variable values and environments saved with a pipeline
 
-Values from `--arguments` are loaded first. Any explicit CLI flag overrides the file value.
+A `.adg` file carries the values its author set in the editor: variable values, input paths or URLs, and output destinations. They are stored in the file's `configs` list, in the same shape as an arguments file, and never in the pipeline specification itself.
+
+The same entry also saves the environment each plugin and step runs in, and the CPUs and memory each step requests, under `execution`. These are what the app would use when you download the file: a step's own environment where one was chosen, otherwise the plugin's environment from your plugin library. `execution` has the same shape as a [runtime config file](/running/cli-config/), so a downloaded pipeline runs without one.
+
+`adagio run` starts from those values, so a shared pipeline runs with its author's values until you change them. To see them, ask for help on the pipeline:
+
+```bash
+adagio run --pipeline path/to/pipeline.adg --show-params all --help
+```
+
+A parameter whose variable has a value shows that value as its `[default: …]`, and an input that already has a path is not listed as required.
+
+To change values, pass flags or an arguments file. The arguments file you download from the app holds the same values as the `.adg`, so it is a convenient starting point to edit. A saved path from another machine simply fails to open at run time; override it the same way.
+
+## Flags override the arguments file, which overrides the saved values
+
+Values are resolved in layers, lowest first:
+
+1. the values saved in the `.adg` file
+2. the `--arguments` file
+3. explicit CLI flags
 
 That means this is valid:
 
@@ -184,6 +204,8 @@ adagio run \
   --param-trunc-len 150
 ```
 
+Environments follow the same idea: a `--config` file overrides the environments saved in the `.adg`. See [Runtime configuration](#runtime-configuration).
+
 ## Providing inputs as flags
 
 Pipeline inputs and parameters can also be passed as flags directly on the command line:
@@ -194,7 +216,7 @@ adagio run --pipeline path/to/pipeline.adg --help
 
 This is especially useful with:
 
-- `--show-params missing` to see only unfilled values after loading an arguments file
+- `--show-params missing` to see only values still unfilled after the saved values and any arguments file
 - `--show-params all` to expose all outputs as `--output-*` flags
 
 ## Output control
@@ -218,11 +240,21 @@ adagio run \
   --output-table /results/table.qza
 ```
 
-Per-output flags override `--output-dir`.
+Per-output flags override `--output-dir`. A per-output path ending in `/` is a directory, and the output is written into it under its own name: `--output-table /results/run-001/` writes `/results/run-001/table.qza`. Without the trailing `/` the path is the file itself. Only the trailing `/` decides, not whether the directory exists. The same rule applies to output paths in an arguments file and in a pipeline file's configuration.
 
 ## Runtime configuration
 
-By default, Adagio resolves each plugin action to a published Docker image using the plugin name.
+A `.adg` downloaded from the app runs each plugin in the environment saved with it. The run header lists every plugin's environment and where it came from, `pipeline file` or `--config`:
+
+```text
+Environments:
+  dada2: docker ghcr.io/cymis/qiime2-plugin-dada2:2026.1 (pipeline file)
+  feature_table: conda /opt/envs/feature-table (--config)
+```
+
+A saved conda environment is a path on its author's machine. On another machine, point that plugin at your own environment with `--config`.
+
+A `--config` file overrides the saved environments: anything it sets wins over the pipeline file, even where the author chose an environment for a single step. A pipeline file from an older release saves no environments, so it needs a `--config` file that names one for every plugin.
 
 Use `--config` when you need to:
 

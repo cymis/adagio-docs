@@ -37,36 +37,36 @@ Connect an output port to a downstream input port.
 
 Adagio only accepts type-compatible connections. If a port does not highlight as a valid target, the semantic types do not match. See [Connections and Semantic Types](/building/connections-and-types/).
 
-## 5. Promote the run-time interface
+## 5. Set values and choose the run-time interface
 
-For each required input that should come from the runner rather than another node:
+Set values directly on the nodes while you build:
 
-1. Select the unconnected input port.
-2. Click **Promote Input**.
+1. Select a node and fill in its parameters.
+2. For an input that is not connected to another node, select the input port and type a file path or URL into its **Path** field.
 
-For each parameter that should stay configurable at run time:
+Then decide what a runner should be able to change. Only parameters that read a variable are exposed at run time; everything else stays fixed as configured on the node. For each such parameter:
 
-1. Select the node.
-2. In the parameter controls, enable **Promote**.
-3. Optionally assign a default later from the pipeline summary.
+1. Open the **Variables** tab and click **+ Create Variable**.
+2. Name the variable and optionally give it a value, which becomes its run-time default.
+3. Select the node, click the variable button at the right of the parameter field, and choose the variable.
 
-Anything you do not promote stays fixed in the pipeline.
+A variable is also the way to give several parameters, or several inputs, one shared value. See [Inputs, Parameters, and Defaults](/building/inputs-parameters-and-defaults/).
 
 ## 6. Save and verify
 
-Use the **To-do** tab to clear validation issues.
+Use the **To Do** tab to clear validation issues.
 
 Adagio blocks pipeline download until the graph has no remaining required-input, required-parameter, or naming problems.
 
 ## 7. Run from the UI
 
 Select a connected Runtime Server from the title bar, then click **Run** in the
-toolbar. Adagio will prompt you to provide values for required inputs and
-parameters that have no defaults.
+toolbar. Adagio will prompt you for required inputs and for variables that
+have no value.
 
 The run form has three parts:
 
-- **Params** for promoted parameters
+- **Parameters** for the parameters that read variables
 - **Files** for paths interpreted by the selected Runtime Server
 - **Environment** for the run details, task environments, concurrency, and cache reuse
 
