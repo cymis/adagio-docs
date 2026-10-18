@@ -6,7 +6,7 @@ description: Install, authorize, use, revoke, and troubleshoot Adagio integratio
 Adagio integrations let AI assistants inspect, create, validate, and safely edit pipelines in your Adagio account. One hosted MCP service exposes the tools, and one public, client-neutral plugin package adds the same guided pipeline skills to supported Codex and Claude Code clients. Each vendor reviews and distributes its official listing separately.
 
 :::note[Publication status]
-The ChatGPT and Codex plugin is in OpenAI review and is not yet published in the official Plugins Directory. The Adagio plugin bundle is awaiting review in Anthropic's directory and is not yet published. Anthropic handles the hosted MCP connector as a separate submission. Direct Claude connections are available today and provide Adagio's tools, but not the six guided workflow skills. A public GitHub package containing those skills and independent Codex and Claude Code marketplaces is in release validation at [`cymis/adagio-plugin`](https://github.com/cymis/adagio-plugin); installation commands below become usable when its first version tag is published.
+The ChatGPT and Codex plugin is in OpenAI review and is not yet published in the official Plugins Directory. The Adagio plugin bundle is awaiting review in Anthropic's directory and is not yet published. Anthropic handles the hosted MCP connector as a separate submission. Direct Claude connections are available today and provide Adagio's tools, but not the six guided workflow skills. A public GitHub package containing those skills, with its own Codex and Claude Code marketplaces, is published at [`cymis/adagio-plugin`](https://github.com/cymis/adagio-plugin); the installation commands below use its current release tag.
 :::
 
 ## Use Adagio with Claude
@@ -26,10 +26,10 @@ Your browser opens Adagio's sign-in page; approve the requested permissions and 
 
 To sign out on that machine, run `claude mcp logout adagio`. Access tokens are short-lived, so signing out ends access promptly.
 
-To install the skills-bearing GitHub release after the `v0.1.2` tag is published, run these commands in Claude Code:
+To install the skills-bearing GitHub release, run these commands in Claude Code:
 
 ```
-/plugin marketplace add cymis/adagio-plugin@v0.1.2
+/plugin marketplace add cymis/adagio-plugin@v0.1.3
 /plugin install adagio@adagio
 /reload-plugins
 ```
@@ -75,10 +75,10 @@ OpenAI distributes the reviewed skills as a versioned snapshot. A change in the 
 
 ### Independent Codex fallback
 
-After the public repository publishes its first `v0.1.2` tag, Codex users can install the same Adagio-maintained bundle without waiting for the Plugins Directory:
+Codex users can install the same Adagio-maintained bundle from the public repository without waiting for the Plugins Directory:
 
 ```
-codex plugin marketplace add cymis/adagio-plugin --ref v0.1.2
+codex plugin marketplace add cymis/adagio-plugin --ref v0.1.3
 codex plugin add adagio@adagio
 ```
 
