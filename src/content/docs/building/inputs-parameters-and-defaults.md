@@ -45,9 +45,10 @@ Action inputs that are not connected to another node are pipeline inputs: a runn
    - `Int`, `String`, `Float`, or `Bool`
    - `List of Int`, `List of String`, or `List of Float`
    - `Path or URL`
+   - `Folder`, for output paths (see [Output paths](#output-paths))
 3. Rename it from the generated `variable_1`, then optionally enter a value and a description.
 
-The tab lists **Path or URL** variables under **Inputs** and every other type under **Parameters**. Path or URL variables have their own category only to make the editor easier to use; they behave like any other variable.
+The tab lists **Path or URL** variables under **Inputs**, **Folder** variables under **Outputs**, and every other type under **Parameters**. Path or URL variables have their own category only to make the editor easier to use; they behave like any other variable.
 
 To delete a variable, click **×** on its row. Every node that used it is detached from it.
 
@@ -62,6 +63,25 @@ For a parameter:
 For an action input, select its unconnected input port and use the variable button on its **Path** field to choose a **Path or URL** variable.
 
 The field then shows the variable's name and value. Typing a value of its own into the field detaches the node from the variable.
+
+## Output paths
+
+Select an output port and open its **Run** tab to set where its result is written after a successful run. The path is saved with the pipeline, so it travels in a downloaded `.adg` and in copies of the pipeline.
+
+- A path ending in `/` is a **folder**. The output is written into it under its own name: `/data/run1/` writes `/data/run1/table.qza`, or `.qzv` for a visualization.
+- A path without the trailing `/` is a **file**: `/data/run1` writes `/data/run1.qza`.
+
+Adagio decides by the trailing `/` alone, never by whether the folder exists, because a shared pipeline runs on other machines. The line under the field shows the file that will be written, so a missing `/` is easy to spot. In Adagio Desktop, **Choose folder…** fills in a folder with its trailing `/`, and **Choose file…** picks a file.
+
+Output names are unique within a pipeline, so outputs written to the same folder never collide. A later run into the same folder replaces files with the same names.
+
+### One folder for many outputs
+
+To send several outputs to one place, create a **Folder** variable, give it a value such as `/data/run1`, and choose it with the variable button on each output's path field. A Folder variable always names a folder, with or without a trailing `/`. Change the variable and every output that uses it moves.
+
+You can also type the variable's name in braces as part of a path: `{results}/my-table.qza` writes `my-table.qza` inside the folder, and `{results}/views/` writes into a `views` folder inside it.
+
+A Folder variable is a convenience of the editor. It is not exposed at run time on the CLI: a downloaded `.adg` carries the complete file path for each output, and `--output-dir` or a per-output `--output-*` flag overrides them as usual. Deleting a Folder variable keeps each output writing where it did.
 
 ## Fixed value vs action default vs variable value
 
