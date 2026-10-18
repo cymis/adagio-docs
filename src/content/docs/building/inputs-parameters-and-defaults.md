@@ -76,7 +76,7 @@ Output names are unique within a pipeline, so outputs written to the same direct
 
 ## Directories in paths
 
-A **Directory** variable names one directory that many paths share, such as the folder a run's data comes from or the one its results go to. Give it a value such as `/data/run1`, then use it on any input or output path:
+A **Directory** variable names one directory that many paths share, such as the directory a run's data comes from or the one its results go to. Give it a value such as `/data/run1`, then use it on any input or output path:
 
 - Choose it with the variable button on the path field. An output then writes into the directory under its own name; an input path becomes `{name}/` followed by the file name it had.
 - Or type its name in braces as part of a path: `{data}/seqs.qza` reads `seqs.qza` inside the directory, `{results}/my-table.qza` writes `my-table.qza` there, and `{results}/views/` writes into a `views` directory inside it.
