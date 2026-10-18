@@ -81,5 +81,5 @@ If no action appears for a selected input port, there is currently no visible pl
 ## Practical guidance
 
 - Keep a mental model of artifact families such as `FeatureTable`, `FeatureData`, `SampleData`, and `Phylogeny`.
-- Leave an input unconnected when the data should come from a file or URL instead of another node. Type the path on the input, or use a **Path or URL** variable when several inputs share it or the runner should set it.
+- Leave an input unconnected when the data should come from a file or URL instead of another node. Type the path on the input, or use a **File path or URL** variable when several inputs share it or the runner should set it.
 - Do not expect Adagio to insert hidden conversion steps. If a conversion is needed, add the explicit action that performs it.

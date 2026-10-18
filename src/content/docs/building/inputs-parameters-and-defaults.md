@@ -20,7 +20,7 @@ You do not need a variable to try a pipeline in the editor.
 
 A variable is a named value that nodes read instead of holding their own. Use one when either of these is true:
 
-- **The same value is used in more than one place.** One variable can feed several parameters, even when the parameters have different names, such as the trim lengths of two denoisers you are comparing. One **Path or URL** variable can feed several input ports, such as one metadata file used by ten steps. Changing the variable changes every use at once.
+- **The same value is used in more than one place.** One variable can feed several parameters, even when the parameters have different names, such as the trim lengths of two denoisers you are comparing. One **File path or URL** variable can feed several input ports, such as one metadata file used by ten steps. Changing the variable changes every use at once.
 - **The value should be set at run time** in a finished or shared pipeline.
 
 If neither applies, leave the value on the node.
@@ -40,14 +40,14 @@ Action inputs that are not connected to another node are pipeline inputs: a runn
 
 ## Creating a variable
 
-1. Open the **Variables** tab in the editor's left rail.
-2. Click **+ Create Variable** and choose its type:
-   - `Int`, `String`, `Float`, or `Bool`
-   - `List of Int`, `List of String`, or `List of Float`
-   - `Path or URL`
-3. Rename it from the generated `variable_1`, then optionally enter a value and a description.
+The **Variables** tab in the editor's left rail has two sections, each with its own create button:
 
-The tab lists **Path or URL** variables under **Inputs** and every other type under **Parameters**. Path or URL variables have their own category only to make the editor easier to use; they behave like any other variable.
+- **Paths**: click **+ Create path variable** and choose
+  - **File path or URL**: one file or URL that becomes a pipeline input
+  - **Directory**: a directory that input and output paths are built from (see [Directories in paths](#directories-in-paths))
+- **Parameters**: click **+ Create parameter variable** and choose `Int`, `String`, `Float`, `Bool`, `List of Int`, `List of String`, or `List of Float`.
+
+Rename the new variable from the generated `variable_1`, then optionally enter a value and a description.
 
 To delete a variable, click **×** on its row. Every node that used it is detached from it.
 
@@ -59,9 +59,31 @@ For a parameter:
 2. Click the variable button at the right of the parameter field.
 3. Choose a variable from the list. Variables whose type or value does not fit the parameter are disabled.
 
-For an action input, select its unconnected input port and use the variable button on its **Path** field to choose a **Path or URL** variable.
+For an action input, select its unconnected input port and use the variable button on its **Path** field. Choose a **File path or URL** variable to make it the input, or a **Directory** variable to build the input's path from it (see [Directories in paths](#directories-in-paths)). Path variables are not offered to parameters.
 
 The field then shows the variable's name and value. Typing a value of its own into the field detaches the node from the variable.
+
+## Output paths
+
+Select an output port and open its **Run** tab to set where its result is written after a successful run. The path is saved with the pipeline, so it travels in a downloaded `.adg` and in copies of the pipeline.
+
+- A path ending in `/` is a **directory**. The output is written into it under its own name: `/data/run1/` writes `/data/run1/table.qza`, or `.qzv` for a visualization.
+- A path without the trailing `/` is a **file**: `/data/run1` writes `/data/run1.qza`.
+
+Adagio decides by the trailing `/` alone, never by whether the directory exists, because a shared pipeline runs on other machines. The line under the field shows the file that will be written, so a missing `/` is easy to spot. In Adagio Desktop, **Choose directory…** fills in a directory with its trailing `/`, and **Choose file…** picks a file.
+
+Output names are unique within a pipeline, so outputs written to the same directory never collide. A later run into the same directory replaces files with the same names.
+
+## Directories in paths
+
+A **Directory** variable names one directory that many paths share, such as the directory a run's data comes from or the one its results go to. Give it a value such as `/data/run1`, then use it on any input or output path:
+
+- Choose it with the variable button on the path field. An output then writes into the directory under its own name; an input path becomes `{name}/` followed by the file name it had.
+- Or type its name in braces as part of a path: `{data}/seqs.qza` reads `seqs.qza` inside the directory, `{results}/my-table.qza` writes `my-table.qza` there, and `{results}/views/` writes into a `views` directory inside it.
+
+A Directory variable always names a directory, with or without a trailing `/`. Its value is a directory on the Runtime Server, never a URL; an input that comes from a URL uses a **File path or URL** variable or the URL typed on the input. The line under each path field shows the complete path, or why it cannot be built. Change the variable and every path that uses it moves.
+
+A Directory variable is a convenience of the editor. It is not exposed at run time on the CLI: a downloaded `.adg` carries the complete path for each input and output, and `--input-*`, `--output-dir` or a per-output `--output-*` flag overrides them as usual. Deleting a Directory variable keeps each path pointing where it did.
 
 ## Fixed value vs action default vs variable value
 
