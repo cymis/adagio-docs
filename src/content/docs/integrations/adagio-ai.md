@@ -6,12 +6,14 @@ description: Install, authorize, use, revoke, and troubleshoot Adagio integratio
 Adagio integrations let AI assistants inspect, create, validate, and safely edit pipelines in your Adagio account. One hosted MCP service exposes the tools, and one public, client-neutral plugin package adds the same guided pipeline skills to supported Codex and Claude Code clients. Each vendor reviews and distributes its official listing separately.
 
 :::note[Publication status]
-The ChatGPT and Codex plugin is in OpenAI review and is not yet published in the official Plugins Directory. The Adagio plugin bundle is awaiting review in Anthropic's directory and is not yet published. Anthropic handles the hosted MCP connector as a separate submission. Direct Claude connections are available today and provide Adagio's tools, but not the six guided workflow skills. A public GitHub package containing those skills, with its own Codex and Claude Code marketplaces, is published at [`cymis/adagio-plugin`](https://github.com/cymis/adagio-plugin); the installation commands below use its current release tag.
+Adagio is published in the Claude and OpenAI plugin directories. Directory versions are reviewed separately: the Claude listing currently serves 0.1.2, while the OpenAI listing provides the hosted tools and the six-skill 0.1.3 package is being submitted as an update. Anthropic's standalone MCP connector listing remains under separate review. You can use the published plugin now; a custom Claude connector also provides the hosted tools. The Adagio-maintained GitHub package at [`cymis/adagio-plugin`](https://github.com/cymis/adagio-plugin/releases/tag/v0.1.3) includes all six skills, and the installation commands below use release 0.1.3.
 :::
 
 ## Use Adagio with Claude
 
 ### Claude Code
+
+Install Adagio from Claude’s plugin directory to use the reviewed directory version. To use GitHub release 0.1.3 directly, follow the marketplace commands below. Use one installation source to avoid duplicate skills and tool connections.
 
 If you have already connected Adagio on claude.ai, the connector's tools are available in Claude Code sessions signed into the same Claude account — no further setup is needed.
 
@@ -29,12 +31,12 @@ To sign out on that machine, run `claude mcp logout adagio`. Access tokens are s
 To install the skills-bearing GitHub release, run these commands in Claude Code:
 
 ```
-/plugin marketplace add cymis/adagio-plugin@v0.1.3
+/plugin marketplace add cymis/adagio-plugin#v0.1.3
 /plugin install adagio@adagio
 /reload-plugins
 ```
 
-Starting a new session also loads the plugin. This GitHub installation is published by Adagio but is not an Anthropic-reviewed listing. Remove it before installing a future reviewed community or official listing to avoid duplicate skills and tool connections.
+Starting a new session also loads the plugin. The GitHub installation is maintained by Adagio and updates independently of the reviewed directory version. Remove it before switching to the directory installation to avoid duplicate skills and tool connections.
 
 ### claude.ai
 
@@ -59,15 +61,12 @@ Pipelines written through Claude display the same provenance labels and record t
 
 ### Official listing
 
-OpenAI review is already underway. There is no official public installation flow until OpenAI approves the submission and Adagio publishes it. The **Use Adagio with ChatGPT and Codex** links currently open this page so you can confirm availability; they do not lead to another installation page.
+Open the [published Adagio listing](https://chatgpt.com/plugins/plugin_asdk_app_6a73ee9b82508191aafa04c3bf5f20b2) from a supported ChatGPT or Codex surface. The existing listing provides Adagio's hosted tools; the 0.1.3 update adds the six guided skills after OpenAI completes its review and publication.
 
-After the official listing is published:
-
-1. Open the official Adagio listing from a supported ChatGPT or Codex surface. A future Adagio Desktop release may open the same listing as a convenience.
-2. Install the plugin.
-3. Choose **Connect** when ChatGPT or Codex requests access.
-4. In the browser, review the requested Adagio permissions and approve them.
-5. Start a new task so the newly installed plugin and skills are available.
+1. Install the plugin.
+2. Choose **Connect** when ChatGPT or Codex requests access.
+3. In the browser, sign in with your Adagio account and review the requested permissions.
+4. Start a new task so the installed plugin is available.
 
 Installation occurs in ChatGPT or Codex. Account authorization occurs through Adagio. Adagio cannot claim that the plugin is installed because OpenAI does not expose that state to the Adagio application.
 
@@ -75,14 +74,14 @@ OpenAI distributes the reviewed skills as a versioned snapshot. A change in the 
 
 ### Independent Codex fallback
 
-Codex users can install the same Adagio-maintained bundle from the public repository without waiting for the Plugins Directory:
+Codex users can install the same Adagio-maintained bundle from the public repository to use release 0.1.3 before its directory update is published:
 
 ```
 codex plugin marketplace add cymis/adagio-plugin --ref v0.1.3
 codex plugin add adagio@adagio
 ```
 
-Restart Codex and start a new task after installation. This path is published by Adagio but is not an OpenAI-reviewed listing, and it is not available in ChatGPT. Remove it before installing the future official listing to avoid duplicate skills or tools.
+Restart Codex and start a new task after installation. This path is maintained by Adagio and updates independently of the reviewed directory version. It is not available in ChatGPT. Remove it before switching to the directory installation to avoid duplicate skills or tools.
 
 Adagio Desktop is optional for the hosted integration. Install and sign in to Desktop only when you want to run pipelines on your computer; the web-hosted inspection and editing flow works without it.
 
